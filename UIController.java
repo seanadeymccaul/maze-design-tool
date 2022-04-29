@@ -2,8 +2,10 @@ import javax.swing.*;
 import java.awt.*;
 
 public class UIController extends JPanel {
-    public UIController(){
 
+    // Instances
+
+    public UIController(){
         setLayout(new GridLayout(3,3));
         Icon upIcon = new ImageIcon("up_arrow.png"); JButton up = new JButton(upIcon);
         Icon downIcon = new ImageIcon("down_arrow.png"); JButton down = new JButton(downIcon);
