@@ -8,7 +8,8 @@ public class main {
     public static void main(String args[]){
 
         UI session = new UI();
-
+        Maze example = new MazeAdult(10,10);
+        example.GenerateAuto();
     }
 
 }

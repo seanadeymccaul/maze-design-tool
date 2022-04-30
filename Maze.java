@@ -5,15 +5,27 @@ abstract class Maze implements MazeInterface{
     // Fields
     private int xDimension;
     private int yDimension;
-    private ResultSet mazeData;
+    public int cells;
+    private int stepSize;
+    private int borderDesign;
+    public int[] mazeData;
 
-    // Methods
-    public void GenerateBlank() {
-
+    public Maze(int xDimension, int yDimension){
+        this.cells = xDimension * yDimension;
+        this.mazeData = new int[cells];
+        GenerateAuto();
     }
 
-    public void GenerateAuto(){
+    // Methods
+    public int[] GenerateBlank() {
+        return new int[1];
+    }
 
+    public int[] GenerateAuto(){
+        for (int i = 0; i < cells; i++){
+            mazeData[i] = i%2;
+        }
+        return new int[1];
     }
 
     public void Import() {
@@ -28,7 +40,7 @@ abstract class Maze implements MazeInterface{
 
     }
 
-    public void Revert() {
+    public void RevertSave() {
 
     }
 
@@ -36,8 +48,8 @@ abstract class Maze implements MazeInterface{
 
     }
 
-    public void CheckSolution() {
-
+    public boolean CheckSolution() {
+        return true;
     }
 
 }

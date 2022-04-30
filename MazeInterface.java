@@ -1,8 +1,8 @@
 public interface MazeInterface {
 
-    public void GenerateBlank();
+    public int[] GenerateBlank();
 
-    public void GenerateAuto();
+    public int[] GenerateAuto();
 
     public void Import();
 
@@ -14,6 +14,6 @@ public interface MazeInterface {
 
     public void InsertImage();
 
-    public void CheckSolution();
+    public boolean CheckSolution();
 
 }
