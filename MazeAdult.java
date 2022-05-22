@@ -1,11 +1,8 @@
-import java.sql.ResultSet;
-
 public class MazeAdult extends Maze{
 
     private byte[] logoImage;
 
-    public MazeAdult(int xDimension, int yDimension) {
-        super(xDimension, yDimension);
+    public MazeAdult(int[] mazeData, int xDimension, int yDimension) { super(mazeData, xDimension, yDimension);
     }
 
     @Override

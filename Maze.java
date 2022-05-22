@@ -12,13 +12,67 @@ abstract class Maze {
     private Solution solution;
     private Algorithm algorithm;
 
-    /**
-     * @param xDimension width of the maze
-     * @param yDimension height of the maze
-     */
+    // construct empty maze
     public Maze(int xDimension, int yDimension){
         this.cells = xDimension * yDimension;
         this.mazeData = new int[cells];
+    }
+
+    // construct maze with existing data
+    public Maze(int[] mazeData, int numColumns, int numRows){
+        this.mazeData = mazeData;
+        this.xDimension = numColumns;
+        this.yDimension = numRows;
+        this.cells = xDimension * yDimension;
+    }
+
+    public int[] GetCell(int cellIndex){
+        int[] cellArray = new int[4];
+        cellArray[0] = GetCellLeft(cellIndex);
+        cellArray[1] = GetCellRight(cellIndex);
+        cellArray[2] = GetCellAbove(cellIndex);
+        cellArray[3] = GetCellBelow(cellIndex);
+        return cellArray;
+    }
+
+    // check cell above
+    private int GetCellAbove(int cellIndex){
+        if (cellIndex > this.xDimension){
+            return this.mazeData[cellIndex - this.xDimension];
+        }
+        else{
+            return 1;       // given that 1 is a block
+        }
+    }
+
+    private int GetCellBelow(int cellIndex){
+        if (cellIndex < this.xDimension * (this.yDimension-1)){     // if it's not in the last row
+            return this.mazeData[cellIndex + this.xDimension];
+        }
+        else{
+            return 1;
+        }
+    }
+
+    private int GetCellLeft(int cellIndex){
+        if (cellIndex%this.xDimension == 0){
+            return 1;
+        }
+        else{
+            return this.mazeData[ - 1];
+        }
+    }
+
+    private int GetCellRight(int cellIndex){
+        if (cellIndex%(this.xDimension) == 4){            // every 5th one is gonna be 1
+            return 1;
+        }
+        else if (cellIndex + 1 == xDimension * yDimension){
+            return 1;
+        }
+        else{
+            return this.mazeData[cellIndex + 1];
+        }
     }
 
     /**
@@ -65,4 +119,5 @@ abstract class Maze {
         return true;
     }
 
+    public abstract void Revert();
 }

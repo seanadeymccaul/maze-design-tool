@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.sql.SQLException;
 
 public class UI extends JFrame{
 
@@ -12,7 +13,7 @@ public class UI extends JFrame{
     private UIMazeDisplay mazePanel;
 
     // Constructor
-    public UI(){
+    public UI() throws SQLException {
         new JFrame("CAB302 Maze App");
 
         setPreferredSize(new Dimension(700,700));
