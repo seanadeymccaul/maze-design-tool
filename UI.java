@@ -16,7 +16,7 @@ public class UI extends JFrame{
     public UI() throws SQLException {
         new JFrame("CAB302 Maze App");
 
-        setPreferredSize(new Dimension(700,700));
+        setPreferredSize(new Dimension(1400,900));
         setLayout(new BorderLayout(50,20));
         setBackground(Color.lightGray);
 
@@ -27,12 +27,14 @@ public class UI extends JFrame{
         add(new UIMenuBar(), BorderLayout.NORTH);
 
         // Add control panel
+        /**
         JPanel controlsPanel = new JPanel(new GridLayout(1,3,50,0));
         controlsPanel.setPreferredSize(new Dimension(200,100)); add(controlsPanel, BorderLayout.CENTER);
         controlsPanel.add(new UIController()); controlsPanel.add(new UIMazeEditor()); controlsPanel.add(new UISolutionChecker());
+         **/
 
         // Add maze display
-        add(new UIMazeDisplay(), BorderLayout.SOUTH);
+        add(new UIMazeDisplay(), BorderLayout.CENTER);
 
         pack();
 

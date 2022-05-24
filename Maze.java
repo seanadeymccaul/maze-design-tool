@@ -1,31 +1,44 @@
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 abstract class Maze {
 
     // Fields
-    private int xDimension;
-    private int yDimension;
-    public int cells;
-    private int stepSize;
-    private int borderDesign;
     public int[] mazeData;
-    private Solution solution;
-    private Algorithm algorithm;
+    private int rows;
+    private int columns;
+    public int cells;
 
     // construct empty maze
-    public Maze(int xDimension, int yDimension){
-        this.cells = xDimension * yDimension;
-        this.mazeData = new int[cells];
+    public Maze(){
+
     }
 
-    // construct maze with existing data
-    public Maze(int[] mazeData, int numColumns, int numRows){
-        this.mazeData = mazeData;
-        this.xDimension = numColumns;
-        this.yDimension = numRows;
-        this.cells = xDimension * yDimension;
+    // Generate a blank maze COMPLETED
+    public void GenerateBlank(int rows, int columns){
+        this.mazeData = new int[rows*columns];
+        for (int i = 0; i < mazeData.length; i++){
+            this.mazeData[i] = 0;
+        }
     }
 
+    // Generate random maze from algorithm NOT DONE
+    public void GenerateMaze() {
+        // load maze from algorithm
+    }
+
+    // Load mazeData from database COMPLETED
+    public void LoadMaze(String tableName) throws SQLException {
+        // load maze from database
+        MazeDatabase db = new MazeDatabase();
+        int[] hello = db.RetrieveTableSize("names");
+    }
+
+    public void SaveMaze(String tableName){
+
+    }
+
+    // get an array for the cell
     public int[] GetCell(int cellIndex){
         int[] cellArray = new int[4];
         cellArray[0] = GetCellLeft(cellIndex);
@@ -35,10 +48,9 @@ abstract class Maze {
         return cellArray;
     }
 
-    // check cell above
     private int GetCellAbove(int cellIndex){
-        if (cellIndex > this.xDimension){
-            return this.mazeData[cellIndex - this.xDimension];
+        if (cellIndex > this.rows){
+            return this.mazeData[cellIndex - this.rows];
         }
         else{
             return 1;       // given that 1 is a block
@@ -46,8 +58,8 @@ abstract class Maze {
     }
 
     private int GetCellBelow(int cellIndex){
-        if (cellIndex < this.xDimension * (this.yDimension-1)){     // if it's not in the last row
-            return this.mazeData[cellIndex + this.xDimension];
+        if (cellIndex < this.rows * (this.columns-1)){     // if it's not in the last row
+            return this.mazeData[cellIndex + rows];
         }
         else{
             return 1;
@@ -55,7 +67,7 @@ abstract class Maze {
     }
 
     private int GetCellLeft(int cellIndex){
-        if (cellIndex%this.xDimension == 0){
+        if (cellIndex%this.rows == 0){
             return 1;
         }
         else{
@@ -64,10 +76,10 @@ abstract class Maze {
     }
 
     private int GetCellRight(int cellIndex){
-        if (cellIndex%(this.xDimension) == 4){            // every 5th one is gonna be 1
+        if (cellIndex%(this.rows) == 4){
             return 1;
         }
-        else if (cellIndex + 1 == xDimension * yDimension){
+        else if (cellIndex + 1 == rows * columns){
             return 1;
         }
         else{
@@ -75,49 +87,4 @@ abstract class Maze {
         }
     }
 
-    /**
-     * Populates the maze data according to maze generation algorithm
-     */
-    public void GenerateAuto() {
-        this.algorithm = new Algorithm(xDimension,yDimension);
-        algorithm.generateResults();
-        this.mazeData = algorithm.getResults();
-    }
-
-    /**
-     * 
-     * @return
-     */
-    public int[] GenerateBlank(){
-        for (int i = 0; i < cells; i++){
-            mazeData[i] = i%2;
-        }
-        return new int[1];
-    }
-
-    public void Import() {
-
-    }
-
-    public void Export() {
-
-    }
-
-    public void Save() {
-
-    }
-
-    public void RevertSave() {
-
-    }
-
-    public void InsertImage() {
-
-    }
-
-    public boolean CheckSolution() {
-        return true;
-    }
-
-    public abstract void Revert();
 }

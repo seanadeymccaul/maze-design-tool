@@ -11,6 +11,10 @@ public class UIMazeDisplay extends JPanel {
         Icon horizontalIcon = new ImageIcon("horizontal_maze.png");
         Icon verticalIcon = new ImageIcon("vertical_maze.png");
 
+        MazeAdult example = new MazeAdult();
+        example.LoadMaze("names");
+
+        /**
         MazeDatabase db = new MazeDatabase();
         int[] mazeData = db.RetrieveTable("maze_example",5,7);
         System.out.println(mazeData.length);
@@ -29,7 +33,11 @@ public class UIMazeDisplay extends JPanel {
                 add(white);
             }
 
-        }
+        }**/
+
+    }
+
+    public static void UpdateDisplay(){
 
     }
 

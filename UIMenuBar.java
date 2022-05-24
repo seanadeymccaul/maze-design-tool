@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
 public class UIMenuBar extends JPanel {
 
@@ -21,6 +22,17 @@ public class UIMenuBar extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 UIMazeCreator newWindow = new UIMazeCreator();
+            }
+        });
+
+        load.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    UIMazeImport newWindow = new UIMazeImport();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
             }
         });
 
