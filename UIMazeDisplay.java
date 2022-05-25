@@ -1,44 +1,39 @@
+import jdk.dynalink.beans.StaticClass;
+
 import javax.swing.*;
 import java.awt.*;
 import java.sql.SQLException;
 
 public class UIMazeDisplay extends JPanel {
 
-    public UIMazeDisplay() throws SQLException {
+    public Maze currentMaze;
 
-        setPreferredSize(new Dimension(400,400));
+        public UIMazeDisplay() throws SQLException {
 
-        Icon horizontalIcon = new ImageIcon("horizontal_maze.png");
-        Icon verticalIcon = new ImageIcon("vertical_maze.png");
+        setPreferredSize(new Dimension(2000,2000));
+        setBackground(Color.GRAY);
+        }
 
-        MazeAdult example = new MazeAdult();
-        example.LoadMaze("names");
+        public void UpdateDisplay(){
+            removeAll();
+            int xDimension = currentMaze.xDimension;
+            int yDimension = currentMaze.yDimension;
+            int cells = currentMaze.cells;
+            // Set the layout
+            setLayout(new GridLayout(yDimension,xDimension));
 
-        /**
-        MazeDatabase db = new MazeDatabase();
-        int[] mazeData = db.RetrieveTable("maze_example",5,7);
-        System.out.println(mazeData.length);
-        Maze currentMaze = new MazeAdult(mazeData,5,7);
-        setLayout(new GridLayout(7,5));
-        System.out.println("Hello");
-        for (int i = 0; i < currentMaze.cells; i++){
-            if (currentMaze.mazeData[i] == 0){
-                JPanel black = new JPanel();
-                black.setBackground(Color.BLACK);
-                add(black);
+            // Populate the maze
+            for (int i = 0; i < cells; i++){
+
+                // for each cell we will populate with border layout
+                Cell currentCell = currentMaze.mazeData[i];
+                // create the panel
+                JPanel currentPanel = new JPanel();
+                currentPanel.setBorder(BorderFactory.createMatteBorder(currentCell.valueAbove*10,currentCell.valueLeft*10,
+                        currentCell.valueBelow*10,currentCell.valueRight*10, Color.BLACK));
+                add(currentPanel);
             }
-            else{
-                JPanel white = new JPanel();
-                white.setBackground(Color.WHITE);
-                add(white);
-            }
-
-        }**/
-
-    }
-
-    public static void UpdateDisplay(){
-
-    }
+            UI_new.getInstance().pack();
+        }
 
 }

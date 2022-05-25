@@ -13,11 +13,6 @@ public class UIMenuBar extends JPanel {
     public UIMenuBar(){
         // Create Buttons
         create = new JButton("Create"); add(create);
-        save = new JButton("Save"); add(save);
-        load = new JButton("Import"); add(load);
-        export = new JButton("Export"); add(export);
-
-        // Event listeners
         create.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -25,11 +20,36 @@ public class UIMenuBar extends JPanel {
             }
         });
 
+        save = new JButton("Save"); add(save);
+        save.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    UIMazeSave newWindow = new UIMazeSave();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+
+        load = new JButton("Load"); add(load);
         load.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    UIMazeImport newWindow = new UIMazeImport();
+                    UIMazeLoad newWindow = new UIMazeLoad();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+
+        export = new JButton("Export"); add(export);
+        export.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    UIMazeExport newWindow = new UIMazeExport();
                 } catch (SQLException ex) {
                     ex.printStackTrace();
                 }
