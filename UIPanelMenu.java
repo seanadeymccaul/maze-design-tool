@@ -1,22 +1,24 @@
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 
-public class UIMenuBar extends JPanel {
+public class UIPanelMenu extends JPanel {
 
     private JButton create;
     private JButton save;
     private JButton load;
     private JButton export;
 
-    public UIMenuBar(){
+    public UIPanelMenu(){
+
         // Create Buttons
         create = new JButton("Create"); add(create);
         create.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                UIMazeCreator newWindow = new UIMazeCreator();
+                UIFormCreator newWindow = new UIFormCreator();
             }
         });
 
@@ -25,7 +27,7 @@ public class UIMenuBar extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    UIMazeSave newWindow = new UIMazeSave();
+                    UIFormSaver newWindow = new UIFormSaver();
                 } catch (SQLException ex) {
                     ex.printStackTrace();
                 }
@@ -37,7 +39,7 @@ public class UIMenuBar extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    UIMazeLoad newWindow = new UIMazeLoad();
+                    UIFormLoader newWindow = new UIFormLoader();
                 } catch (SQLException ex) {
                     ex.printStackTrace();
                 }
@@ -49,7 +51,7 @@ public class UIMenuBar extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    UIMazeExport newWindow = new UIMazeExport();
+                    UIFormExporter newWindow = new UIFormExporter();
                 } catch (SQLException ex) {
                     ex.printStackTrace();
                 }

@@ -1,14 +1,11 @@
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.SQLException;
 
-public class UIMazeSave extends JFrame {
+public class UIFormExporter extends JFrame {
 
-    public UIMazeSave() throws SQLException {
-
-        new JFrame("Maze Loader");
+    public UIFormExporter() throws SQLException {
+        /**
+        new JFrame("Maze Exporter");
         setPreferredSize(new Dimension(400,400));
         setLayout(new BorderLayout(10, 30));
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -29,11 +26,19 @@ public class UIMazeSave extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String text = textField.getText();
+                try {
+                    MazeDatabase db = new MazeDatabase();
+                    //db.CreateDataColumn(text);
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
 
             }
         });
 
         add(settingsPanel);
         pack();
+    }
+         */
     }
 }

@@ -28,8 +28,6 @@ public class MazeDatabase {
     public void CreateTable(String tableName, String[] mazeData, int mazeType, int xDimension, int yDimension) throws SQLException {
         // Create the table
         String sql = "CREATE TABLE " + tableName + " (id int NOT NULL AUTO_INCREMENT, mazeData VARCHAR(5), mazeType INT, xDimension INT, yDimension INT, PRIMARY KEY (id));";
-        System.out.println(sql);
-        System.out.println(sql);
         PreparedStatement statement = connection.prepareStatement(sql);
         statement.execute();
         // Insert the mazeData
@@ -40,7 +38,6 @@ public class MazeDatabase {
         }
         // Insert the dimensions and type
         sql = "UPDATE " + tableName + " SET mazeType = " + mazeType + ", xDimension = " + xDimension + ", yDimension = " + yDimension + " WHERE id = " + 1 + ";";
-        System.out.println(sql);
         statement = connection.prepareStatement(sql);
         statement.execute();
     }

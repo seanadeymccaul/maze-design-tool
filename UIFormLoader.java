@@ -4,9 +4,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 
-public class UIMazeLoad extends JFrame {
+public class UIFormLoader extends JFrame {
 
-    public UIMazeLoad() throws SQLException {
+    public UIFormLoader() throws SQLException {
 
         // Set up the main JFrame
         new JFrame("Maze Importer");
@@ -37,12 +37,12 @@ public class UIMazeLoad extends JFrame {
                 }
                 try {
                     if (UI_new.getInstance().dbAccess.GetMazeType(mazeNames[mazeNameBox.getSelectedIndex()]) == 0){
-                        UI_new.getInstance().mazeDisplay.currentMaze = new MazeAdult();
+                        UI_new.getInstance().display.currentMaze = new MazeAdult();
                     } else {
-                        UI_new.getInstance().mazeDisplay.currentMaze = new MazeChild();
+                        UI_new.getInstance().display.currentMaze = new MazeChild();
                     }
-                    UI_new.getInstance().mazeDisplay.currentMaze.LoadMaze(mazeNames[mazeNameBox.getSelectedIndex()]);
-                    UI_new.getInstance().mazeDisplay.UpdateDisplay();
+                    UI_new.getInstance().display.currentMaze.LoadMaze(mazeNames[mazeNameBox.getSelectedIndex()]);
+                    UI_new.getInstance().display.UpdateDisplay();
 
 
                 } catch (SQLException exception) {

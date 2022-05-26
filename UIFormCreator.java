@@ -4,9 +4,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 
-public class UIMazeCreator extends JFrame {
+public class UIFormCreator extends JFrame {
 
-    public UIMazeCreator() {
+    public UIFormCreator() {
 
         // Set up the main JFrame
         new JFrame("Maze Creation");
@@ -36,11 +36,11 @@ public class UIMazeCreator extends JFrame {
         // Add spinners for the dimensions
         JLabel xDimensionLabel = new JLabel("xDimension");
         settingsPanel.add(xDimensionLabel);
-        JSpinner xDimensionSelection = new JSpinner(new SpinnerNumberModel(10,10,50,2));
+        JSpinner xDimensionSelection = new JSpinner(new SpinnerNumberModel(10,10,100,2));
         settingsPanel.add(xDimensionSelection);
         JLabel yDimensionLabel = new JLabel("yDimension");
         settingsPanel.add(yDimensionLabel);
-        JSpinner yDimensionSelection = new JSpinner(new SpinnerNumberModel(10,10,50,2));
+        JSpinner yDimensionSelection = new JSpinner(new SpinnerNumberModel(10,10,100,2));
         settingsPanel.add(yDimensionSelection);
 
         // Add the settings panel
@@ -60,26 +60,26 @@ public class UIMazeCreator extends JFrame {
 
                 if (mazeTypeSelection.getSelectedIndex() == 0){
                     try {
-                        UI_new.getInstance().mazeDisplay.currentMaze = new MazeAdult(mazeName,0,xDimension,yDimension);
+                        UI_new.getInstance().display.currentMaze = new MazeAdult(mazeName,0,xDimension,yDimension);
                         if (mazeGenerationSelection.getSelectedIndex() == 0){
-                            UI_new.getInstance().mazeDisplay.currentMaze.GenerateAuto();
-                            UI_new.getInstance().mazeDisplay.UpdateDisplay();
+                            UI_new.getInstance().display.currentMaze.GenerateAuto();
+                            UI_new.getInstance().display.UpdateDisplay();
                         } else if (mazeGenerationSelection.getSelectedIndex() == 1){
-                            UI_new.getInstance().mazeDisplay.currentMaze.GenerateBlank();
-                            UI_new.getInstance().mazeDisplay.UpdateDisplay();
+                            UI_new.getInstance().display.currentMaze.GenerateBlank();
+                            UI_new.getInstance().display.UpdateDisplay();
                         }
                     } catch (SQLException ex) {
                         ex.printStackTrace();
                     }
                 } else if (mazeTypeSelection.getSelectedIndex() == 1){
                     try {
-                        UI_new.getInstance().mazeDisplay.currentMaze = new MazeChild(mazeName,1,xDimension,yDimension);
+                        UI_new.getInstance().display.currentMaze = new MazeChild(mazeName,1,xDimension,yDimension);
                         if (mazeGenerationSelection.getSelectedIndex() == 0){
-                            UI_new.getInstance().mazeDisplay.currentMaze.GenerateAuto();
-                            UI_new.getInstance().mazeDisplay.UpdateDisplay();
+                            UI_new.getInstance().display.currentMaze.GenerateAuto();
+                            UI_new.getInstance().display.UpdateDisplay();
                         } else if (mazeGenerationSelection.getSelectedIndex() == 1){
-                            UI_new.getInstance().mazeDisplay.currentMaze.GenerateBlank();
-                            UI_new.getInstance().mazeDisplay.UpdateDisplay();
+                            UI_new.getInstance().display.currentMaze.GenerateBlank();
+                            UI_new.getInstance().display.UpdateDisplay();
                         }
                     } catch (SQLException ex) {
                         ex.printStackTrace();
