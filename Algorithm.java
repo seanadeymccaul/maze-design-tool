@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Algorithm {
-
+    /**
     public MazeCell[] mazeData;
     public ArrayList<Integer> solution;
     private int xDimension;
@@ -81,6 +81,25 @@ public class Algorithm {
 
     }
 
+    /**
+     Algorithm algorithm = new Algorithm(this.xDimension, this.yDimension);
+     algorithm.GenerateBlank();
+     this.mazeData = algorithm.mazeData;
+     db.CreateTable(name, CellToString(this.mazeData),type,xDimension,yDimension);
+     }
+
+     // INCOMPLETE - need to incorporate algorithm just random at the moment
+     public void GenerateAutoMaze() throws SQLException {
+
+     Algorithm algorithm = new Algorithm(this.xDimension,this.yDimension);
+     algorithm.GenerateBlank();
+     algorithm.GenerateSolution();
+     algorithm.PopulateMaze();
+     this.mazeData = algorithm.mazeData;
+     db.CreateTable(name, CellToString(this.mazeData),type,xDimension,yDimension);
+     }
+
+
     // Edit Cells
     public void EditCell(MazeCell newCell, int cellIndex){
 
@@ -117,9 +136,6 @@ public class Algorithm {
         return r.nextInt((1 - 0) + 1) + 0;
     }
 
-    public static int GetRandomInt6(){
-        return (int)(Math.random()*6);
-    }
 
     public void GenerateBlank(){
 
@@ -193,5 +209,5 @@ public class Algorithm {
     public int[] getResults(){
         return new int[1];
     }
-
+*/
 }

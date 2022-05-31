@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.sql.SQLException;
 
 public class UIFormLoader extends JFrame {
@@ -41,12 +42,13 @@ public class UIFormLoader extends JFrame {
                     } else {
                         UI_new.getInstance().display.currentMaze = new MazeChild();
                     }
-                    UI_new.getInstance().display.currentMaze.LoadMaze(mazeNames[mazeNameBox.getSelectedIndex()]);
+                    UI_new.getInstance().display.currentMaze.GenerateSavedMaze(mazeNames[mazeNameBox.getSelectedIndex()]);
                     UI_new.getInstance().display.UpdateDisplay();
-
 
                 } catch (SQLException exception) {
                     exception.printStackTrace();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
                 }
             }
         });

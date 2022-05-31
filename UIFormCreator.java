@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.sql.SQLException;
 
 public class UIFormCreator extends JFrame {
@@ -60,28 +61,32 @@ public class UIFormCreator extends JFrame {
 
                 if (mazeTypeSelection.getSelectedIndex() == 0){
                     try {
-                        UI_new.getInstance().display.currentMaze = new MazeAdult(mazeName,0,xDimension,yDimension);
+                        UI_new.getInstance().display.currentMaze = new MazeAdult(mazeName,xDimension,yDimension);
                         if (mazeGenerationSelection.getSelectedIndex() == 0){
-                            UI_new.getInstance().display.currentMaze.GenerateAuto();
+                            UI_new.getInstance().display.currentMaze.GenerateAutoMaze();
                             UI_new.getInstance().display.UpdateDisplay();
                         } else if (mazeGenerationSelection.getSelectedIndex() == 1){
-                            UI_new.getInstance().display.currentMaze.GenerateBlank();
+                            UI_new.getInstance().display.currentMaze.GenerateBlankMaze();
                             UI_new.getInstance().display.UpdateDisplay();
                         }
                     } catch (SQLException ex) {
                         ex.printStackTrace();
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
                     }
                 } else if (mazeTypeSelection.getSelectedIndex() == 1){
                     try {
-                        UI_new.getInstance().display.currentMaze = new MazeChild(mazeName,1,xDimension,yDimension);
+                        UI_new.getInstance().display.currentMaze = new MazeChild(mazeName,xDimension,yDimension);
                         if (mazeGenerationSelection.getSelectedIndex() == 0){
-                            UI_new.getInstance().display.currentMaze.GenerateAuto();
+                            UI_new.getInstance().display.currentMaze.GenerateAutoMaze();
                             UI_new.getInstance().display.UpdateDisplay();
                         } else if (mazeGenerationSelection.getSelectedIndex() == 1){
-                            UI_new.getInstance().display.currentMaze.GenerateBlank();
+                            UI_new.getInstance().display.currentMaze.GenerateBlankMaze();
                             UI_new.getInstance().display.UpdateDisplay();
                         }
                     } catch (SQLException ex) {
+                        ex.printStackTrace();
+                    } catch (IOException ex) {
                         ex.printStackTrace();
                     }
                 }

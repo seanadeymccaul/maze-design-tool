@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 import java.sql.SQLException;
 
 public class UIPanelDisplay extends JPanel {
@@ -13,26 +14,21 @@ public class UIPanelDisplay extends JPanel {
         setBackground(Color.GRAY);
     }
 
-    public void UpdateDisplay() {
+    public void UpdateDisplay() throws IOException {
         // Clear the display
         removeAll();
-        // Get information from currentMaze
-        int xDimension = currentMaze.xDimension;
-        int yDimension = currentMaze.yDimension;
-        int cells = currentMaze.cells;
-        MazeCell[] mazeData = currentMaze.mazeData;
+
+        MazeCell[] mazeData = currentMaze.getMazeData();
+        int xDimension = currentMaze.getXDimension();
+        int yDimension = currentMaze.getYDimension();
+        int cells = currentMaze.getCellCount();
         // Set the layout
         setLayout(new GridLayout(yDimension, xDimension));
-        // Populate the maze
-        for (int i = 0; i < cells; i++) {
-            MazeCell currentCell = currentMaze.mazeData[i];
-            UIPanelMazeCell cell2 = new UIPanelMazeCell(currentCell,i);
-            add(cell2);
-            if (currentCell.value == 4){
-                cell2.setBackground(Color.GREEN);
-            }
-
-            // when creating a line of them and then close them, they all block off
+        // Populate the display
+        UIPanelDisplayCell[] cellToDisplay = this.currentMaze.GetDisplayData();
+        for (int i = 0; i < cellToDisplay.length; i++) {
+            cellToDisplay[i].CreateBorder();
+            add(cellToDisplay[i]);
         }
         UI_new.getInstance().pack();
     }
