@@ -5,9 +5,12 @@ import java.sql.SQLException;
 public class UI_new extends JFrame{
 
     public UIPanelDisplay display;
-    public MazeDatabase dbAccess = new MazeDatabase();
+    public UIPanelEditor editor;
+    public UIPanelSolution solution;
+    public UIPanelImageSelect imageSelect;
 
     protected UI_new() throws SQLException {
+
         // Set up JFrame
         new JFrame("CAB302 Maze App");
         setPreferredSize(new Dimension(1400,900));
@@ -15,13 +18,16 @@ public class UI_new extends JFrame{
         setBackground(Color.lightGray);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setVisible(true);
-        // Add control panel
-        JPanel controlPanel = new JPanel(); controlPanel.setLayout(new BorderLayout(425,10));
-        controlPanel.setPreferredSize(new Dimension(300,100));
-        controlPanel.add(new UIPanelMenu(), BorderLayout.NORTH);
-        controlPanel.add(new UIPanelEditor(), BorderLayout.CENTER);
-        controlPanel.add(new JPanel(),BorderLayout.EAST); controlPanel.add(new JPanel(),BorderLayout.WEST);
-        add(controlPanel, BorderLayout.NORTH);
+
+        // Add control panel with menu, imageSelect, editor, and solutionChecker
+        JPanel controlPanel = new JPanel(); controlPanel.setLayout(new BorderLayout(10,0));
+        controlPanel.setPreferredSize(new Dimension(1200,200));
+        editor = new UIPanelEditor(); controlPanel.add(editor,BorderLayout.CENTER);
+        imageSelect = new UIPanelImageSelect(); controlPanel.add(imageSelect,BorderLayout.WEST);
+        solution = new UIPanelSolution(); controlPanel.add(solution,BorderLayout.EAST);
+        controlPanel.add(new UIPanelMenu(),BorderLayout.NORTH);
+        add(controlPanel,BorderLayout.NORTH);
+
         // Add the display
         display = new UIPanelDisplay();
         JPanel displayHolder = new JPanel(); displayHolder.setLayout(new BorderLayout()); displayHolder.add(display,BorderLayout.CENTER);

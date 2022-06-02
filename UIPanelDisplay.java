@@ -6,22 +6,24 @@ import java.sql.SQLException;
 public class UIPanelDisplay extends JPanel {
 
     public Maze currentMaze;
-    public MazeCell currentSelection;
 
     public UIPanelDisplay() throws SQLException {
+
         // Set up
         setPreferredSize(new Dimension(2000, 2000));
         setBackground(Color.GRAY);
     }
 
     public void UpdateDisplay() throws IOException {
+
         // Clear the display
         removeAll();
 
-        MazeCell[] mazeData = currentMaze.getMazeData();
-        int xDimension = currentMaze.getXDimension();
-        int yDimension = currentMaze.getYDimension();
-        int cells = currentMaze.getCellCount();
+        MazeCell[] mazeData = currentMaze.GetMazeData();
+        int xDimension = currentMaze.GetXDimension();
+        int yDimension = currentMaze.GetYDimension();
+        int cells = currentMaze.GetCellCount();
+        currentMaze.GenerateDisplayData();
         // Set the layout
         setLayout(new GridLayout(yDimension, xDimension));
         // Populate the display

@@ -26,10 +26,15 @@ public class UIFormSaver extends JFrame {
         JButton button = new JButton("Confirm");
         settingsPanel.add(button);
         button.addActionListener(new ActionListener() {
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 String text = textField.getText();
-
+                try {
+                    UI_new.getInstance().display.currentMaze.SaveMaze(text);
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
             }
         });
 

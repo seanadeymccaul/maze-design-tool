@@ -11,16 +11,18 @@ public class UIPanelDisplayCell extends JPanel implements MouseListener {
 
     public MazeCell cell;
     public int index;
-    protected int borderWidth;
+    public int borderWidth;
+    public int cellWidth;
 
     public UIPanelDisplayCell(MazeCell cell, int index){
         this.cell = cell;
         this.index = index;
         this.borderWidth = 6 - UI_new.getInstance().display.currentMaze.cellCount / 2000;
+        this.cellWidth = UI_new.getInstance().display.currentMaze.cellCount / 2000;
         new JPanel();
         addMouseListener(this);
     }
-    
+
     public void CreateBorder() {
         setBorder(BorderFactory.createMatteBorder(cell.getWallAbove() * borderWidth, cell.getWallLeft() * borderWidth,
                 cell.getWallBelow() * borderWidth, cell.getWallRight() * borderWidth, Color.BLACK));
@@ -41,28 +43,24 @@ public class UIPanelDisplayCell extends JPanel implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        try {
-            UI_new.getInstance().display.currentMaze.InsertLogo("mcdonalds.png",this.index,1,1);
-            UI_new.getInstance().display.UpdateDisplay();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-        try {
-            UI_new.getInstance().display.UpdateDisplay();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
 
-        if (UI_new.getInstance().display.currentSelection != null) {
-            UI_new.getInstance().display.currentMaze.ReplaceCell(UI_new.getInstance().display.currentSelection, this.index);
+
+
+        if (UI_new.getInstance().editor.GetCurrentSelection() != null){
+            System.out.println("Above, below, left right = " + UI_new.getInstance().editor.GetCurrentSelection().getWallAbove() +
+                    UI_new.getInstance().editor.GetCurrentSelection().getWallBelow() +
+                    UI_new.getInstance().editor.GetCurrentSelection().getWallLeft() +
+                    UI_new.getInstance().editor.GetCurrentSelection().getWallRight());
+            UI_new.getInstance().display.currentMaze.ReplaceCell(UI_new.getInstance().editor.GetCurrentSelection(),this.index);
             try {
                 UI_new.getInstance().display.UpdateDisplay();
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
-        } else {
         }
-    }
+
+        }
+
 
     @Override
     public void mousePressed(MouseEvent e) {

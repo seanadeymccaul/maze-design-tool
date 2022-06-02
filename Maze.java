@@ -5,52 +5,65 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 
 abstract class Maze {
 
     // Fields
-    protected String name;
-    public String getName(){return name;}
+
+    private String name;
+    public String GetName(){return name;}
+
+    private String author;
+    public String GetAuthor(){return author;}
+
     protected MazeCell[] mazeData;
-    public MazeCell[] getMazeData(){return mazeData;}
-    public void setMazeData(MazeCell[] d){mazeData = d;}
+    public MazeCell[] GetMazeData(){return mazeData;}
+
     protected UIPanelDisplayCell[] displayData;
-    public void setDisplayData(UIPanelDisplayCell[] d){displayData = d;}
-    protected int xDimension;
-    public int getXDimension(){return xDimension;}
-    protected int yDimension;
-    public int getYDimension(){return yDimension;}
-    protected int cellCount;
-    public int getCellCount(){return  cellCount;}
-    protected MazeDatabase db;
+    public UIPanelDisplayCell[] GetDisplayData(){return displayData;}
 
-    // Constructor
-    public Maze() throws SQLException {
-        this.db = new MazeDatabase();
-    }
+    protected int xDimension, yDimension, cellCount, logoIndex, logoWidth, logoHeight;
+    public int GetXDimension(){return xDimension;}
+    public int GetYDimension(){return yDimension;}
+    public int GetCellCount(){return cellCount;}
+    public int GetLogoIndex(){return logoIndex;}
+    public int GetLogoWidth(){return logoWidth;}
+    public int GetLogoHeight(){return logoHeight;}
 
-    public Maze(String name, int xDimension, int yDimension) throws SQLException {
+    protected String creationTime, lastEditTime, startImagePath, endImagePath, logoImagePath;
+    public String GetCreationTime(){return creationTime;}
+    public String GetLastEditTime(){return lastEditTime;}
+    public String GetStartImagePath(){return startImagePath;}
+    public String GetEndImagePath(){return endImagePath;}
+    public String GetLogoImagePath(){return logoImagePath;}
+
+
+    // Default constructor
+
+    public Maze() throws SQLException { }
+
+
+    // New maze constructor
+
+    public Maze(String name,String author, int xDimension, int yDimension) throws SQLException, IOException {
         this.name = name;
+        this.author = author;
         this.xDimension = xDimension;
         this.yDimension = yDimension;
         this.cellCount = xDimension * yDimension;
         this.mazeData = new MazeCell[this.cellCount];
-        this.displayData = new UIPanelDisplayCell[this.cellCount];
-        this.db = new MazeDatabase();
+        this.lastEditTime = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new java.util.Date());
+        this.logoIndex = GetRandomInt(cellCount-xDimension);
+        this.logoHeight = 1;
+        this.logoWidth = 1;
+        System.out.println(logoIndex);
     }
 
-    public UIPanelDisplayCell[] GetDisplayData() throws IOException {
-        for (int i = 0; i < this.cellCount; i++){
-            if (this.mazeData[i].getValue() < 5){
-                UIPanelDisplayCell currentPanel = new UIPanelDisplayCell(this.mazeData[i],i);
-                this.displayData[i] = currentPanel;
-            }
-        }
-        return this.displayData;
-    };
 
-    // Implemented in Maze Adult and Child
-    public void GenerateBlankMaze() {
+    // Generates a blank canvas
+
+    public void GenerateBlankMaze() throws IOException, SQLException {
         for (int i = 0; i < this.cellCount; i++){
             int id = 1, wallAbove = 0, wallBelow = 0, wallLeft = 0, wallRight = 0;
             if (CheckTopBorder(i)){
@@ -67,13 +80,12 @@ abstract class Maze {
             }
             this.mazeData[i] = new MazeCell(id,wallLeft,wallRight,wallAbove,wallBelow);
         }
-        this.ReplaceCell(new MazeCell(3,1,0,0,0),0);
-        this.ReplaceCell(new MazeCell(3,0,1,0,0),this.cellCount-1);
     }
 
-    // Implemented in Maze Adult and Child
-    public void GenerateAutoMaze() {
-        this.GenerateBlankMaze();
+
+    // Generates a fully populated maze with solution
+
+    public void GenerateAutoMaze() throws IOException, SQLException {
         int i = 0;
         String lastMove = "";
         while (i < (xDimension * yDimension)){
@@ -131,43 +143,59 @@ abstract class Maze {
         }
     }
 
+    // Override by adult and child classes
+
+    public void GenerateDisplayData() throws IOException { }
+
     //
-    public void GenerateSavedMaze(String mazeName) throws SQLException {
-        this.mazeData = StringArrayToCellArray(db.GetMazeData(mazeName));
-        Integer[] dimensions = db.GetMazeDimensions(mazeName);
-        this.xDimension = dimensions[0];
-        this.yDimension = dimensions[1];
-        this.cellCount = this.xDimension * this.yDimension;
+    public void GenerateSavedMaze(String mazeName) throws SQLException, IOException {
+        this.name = mazeName;
+        this.author = MazeDatabase_new.getInstance().GetString(mazeName,"mazeAuthor");
+        this.mazeData = StringArrayToCellArray(MazeDatabase_new.getInstance().GetMazeData(mazeName));
+        this.xDimension = MazeDatabase_new.getInstance().GetInt(mazeName,"xDimension");
+        this.yDimension = MazeDatabase_new.getInstance().GetInt(mazeName,"xDimension");
+        this.cellCount = xDimension * yDimension;
+        this.lastEditTime = MazeDatabase_new.getInstance().GetString(mazeName,"lastEditTime");
+        this.startImagePath = MazeDatabase_new.getInstance().GetString(mazeName,"startImagePath");
+        this.endImagePath = MazeDatabase_new.getInstance().GetString(mazeName,"endImagePath");
+        this.logoImagePath = MazeDatabase_new.getInstance().GetString(mazeName,"logoImagePath");
+        this.logoIndex = MazeDatabase_new.getInstance().GetInt(mazeName,"logoImageIndex");
+        this.logoHeight = MazeDatabase_new.getInstance().GetInt(mazeName,"logoImageHeight");
+        this.logoWidth = MazeDatabase_new.getInstance().GetInt(mazeName,"logoImageWidth");
     }
 
     //
     public void SaveMaze(String tableName) throws SQLException {
-        db.SetMazeData(tableName, CellArrayToStringArray(this.mazeData));
+        MazeDatabase_new.getInstance().SetMazeData(tableName,CellArrayToStringArray(mazeData));
     }
 
     //
     public void ReplaceCell(MazeCell newCell, int cellIndex){
+
+        MazeCell replacement = new MazeCell(newCell.getValue(),newCell.getWallLeft(),newCell.getWallRight(),
+                newCell.getWallAbove(),newCell.getWallBelow());
+
         if (CheckTopBorder(cellIndex)){
-            newCell.setWallAbove(1);
+            replacement.setWallAbove(1);
         } else {
-            this.mazeData[cellIndex - xDimension].setWallBelow(newCell.getWallAbove());
+            this.mazeData[cellIndex - xDimension].setWallBelow(replacement.getWallAbove());
         }
         if (CheckBottomBorder(cellIndex)){
-            newCell.setWallBelow(1);
+            replacement.setWallBelow(1);
         } else {
-            this.mazeData[cellIndex + xDimension].setWallAbove(newCell.getWallBelow());
+            this.mazeData[cellIndex + xDimension].setWallAbove(replacement.getWallBelow());
         }
         if (CheckLeftBorder(cellIndex)){
-            newCell.setWallLeft(1);
+            replacement.setWallLeft(1);
         } else {
-            this.mazeData[cellIndex - 1].setWallRight(newCell.getWallLeft());
+            this.mazeData[cellIndex - 1].setWallRight(replacement.getWallLeft());
         }
         if (CheckRightBorder(cellIndex)){
-            newCell.setWallRight(1);
+            replacement.setWallRight(1);
         } else {
-            this.mazeData[cellIndex + 1].setWallLeft(newCell.getWallRight());
+            this.mazeData[cellIndex + 1].setWallLeft(replacement.getWallRight());
         }
-        this.mazeData[cellIndex] = newCell;
+        this.mazeData[cellIndex] = replacement;
     }
 
     public boolean CheckTopBorder(int cellIndex){
@@ -201,7 +229,7 @@ abstract class Maze {
     }
 
     // COMPLETED and TESTED
-    private String[] CellArrayToStringArray(MazeCell[] cellData){
+    public String[] CellArrayToStringArray(MazeCell[] cellData){
         String[] mazeDataString = new String[mazeData.length];
         for (int i = 0; i < cellData.length; i++){
             String value = Integer.toString(cellData[i].getValue()) + Integer.toString(cellData[i].getWallLeft()) +
@@ -213,15 +241,17 @@ abstract class Maze {
     }
 
     // COMPLETED and TESTED
-    private MazeCell[] StringArrayToCellArray(String[] stringData){
+    public MazeCell[] StringArrayToCellArray(String[] stringData){
         MazeCell[] cellData = new MazeCell[stringData.length];
         for (int i = 0; i < stringData.length; i++){
             cellData[i] = new MazeCell(Character.getNumericValue(stringData[i].charAt(0)),
-                    Character.getNumericValue(stringData[i].charAt(3)),
-                    Character.getNumericValue(stringData[i].charAt(4)),
                     Character.getNumericValue(stringData[i].charAt(1)),
-                    Character.getNumericValue(stringData[i].charAt(2)));
+                    Character.getNumericValue(stringData[i].charAt(2)),
+                    Character.getNumericValue(stringData[i].charAt(3)),
+                    Character.getNumericValue(stringData[i].charAt(4)));
+
         }
+
         return cellData;
     }
 
@@ -229,49 +259,32 @@ abstract class Maze {
         return (int)(Math.random()*max);
     }
 
-    public void InsertLogo(String path, int index, int height, int width) throws IOException {
-        if (index + width + (height * xDimension) < this.cellCount){
-            int displayCellWidth = 2000 / this.xDimension;
-            Image image = ImageIO.read(new File(path));
-            Image scaledImage = image.getScaledInstance(displayCellWidth * width,
-                    displayCellWidth * height,Image.SCALE_DEFAULT);
-            JLabel picLabel = new JLabel(new ImageIcon(scaledImage));
-            this.mazeData[index].setValue(5);
-            this.displayData[index].InsertImage(picLabel);
-            UI_new.getInstance().display.UpdateDisplay();
-
-            /**
-            BufferedImage image = ImageIO.read(new File(path));
-            int xScale = image.getWidth() / displayCellWidth * width;
-            int yScale = image.getHeight() / displayCellWidth * height;
-            BufferedImage scaledImage = new BufferedImage(xScale * image.getWidth(), yScale * image.getHeight(),
-                    BufferedImage.TYPE_INT_ARGB);
-            Graphics2D graph = (Graphics2D) scaledImage.getGraphics();
-            graph.scale(xScale,yScale);
-            graph.drawImage(image,0,0,null);
-            graph.dispose();
-            /**
+    public void InsertImage(String path, int index, int height, int width) throws IOException {
+        if ((index + width + ((height-1) * xDimension) <= cellCount)){
+            int scaledWidth = width * 2000 / xDimension;
+            int scaledHeight = height * 2000 / yDimension;
+            // read input image
+            File inputFile = new File(path);
+            BufferedImage inputImage = ImageIO.read(inputFile);
+            // create output image
+            BufferedImage outputImage = new BufferedImage(scaledWidth, scaledHeight, inputImage.getType());
+            // scales input image to the output image
+            Graphics g2d = outputImage.createGraphics();
+            g2d.drawImage(inputImage, 0, 0, scaledWidth, scaledHeight, null);
+            g2d.dispose();
+            // cut it up
             int x = 0, y = 0;
-            for (int i = 0; i < height; i++){
-                y = y + 200;
-                for (int j = 0; j < width; j++){
-                    // Reserve with id of 5
-                    ReplaceCell(new MazeCell(5,1,1,1,1),index + i + j);
-                    // Add respective
-                    BufferedImage individualCrop = image.getSubimage(x,y,200,200);
-                    // add that to the coordinates in UIMazePanelDisplay
-                    JLabel picLabel = new JLabel(new ImageIcon(individualCrop));
+            for (int i = 0; i < height; i++) {
+                for (int j = 0; j < width; j++) {
+                    mazeData[index + j + (xDimension * i)].setValue(5);
+                    BufferedImage croppedImage = outputImage.getSubimage(x, y, 2000 / xDimension, 2000 / yDimension);
+                    JLabel picLabel = new JLabel(new ImageIcon(croppedImage));
                     this.displayData[index + j + (xDimension * i)].add(picLabel);
+                    x = x + 2000 / xDimension;
                 }
-            }*/
-
+                x = 0;
+                y = y + 2000 / yDimension;
+            }
         }
     }
-
-    /**
-     *         BufferedImage image = ImageIO.read(new File(path));
-     *         JLabel picLabel = new JLabel(new ImageIcon(image));
-     *         add(picLabel);
-     */
-
 }

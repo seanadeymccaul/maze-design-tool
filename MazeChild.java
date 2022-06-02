@@ -1,8 +1,5 @@
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class MazeChild extends Maze{
 
@@ -14,57 +11,80 @@ public class MazeChild extends Maze{
         super();
     }
 
-    public MazeChild(String name, int xDimension, int yDimension) throws SQLException {
-        super(name, xDimension, yDimension);
+    public MazeChild(String name,String author, int xDimension, int yDimension) throws SQLException, IOException {
+        super(name, author, xDimension, yDimension);
     }
 
     @Override
-    public UIPanelDisplayCell[] GetDisplayData() throws IOException {
-        super.GetDisplayData();
-        return displayData;
+    public void GenerateBlankMaze() throws IOException, SQLException {
+
+        // Generate blank maze
+        super.GenerateBlankMaze();
+
+        // Initialise the start and end cells
+        this.InitialiseStartEndCells();
+
+        // Generate the display data
+        this.GenerateDisplayData();
+
+        // Create the table in the database
+        MazeDatabase_new.getInstance().CreateTable(this,"Child", lastEditTime);
+
     }
 
+    @Override
+    public void GenerateAutoMaze() throws IOException, SQLException {
 
-    /**
-    private ArrayList<Integer> GetChildIndex(int index){
-        // if x%2 == 1 then add index - 1 (5 is the same as 6). When y%2 == 0 then we add the one above it (- xDimension)
-        ArrayList<Integer> childIndex = new ArrayList<>(); childIndex.add(index);
-        int x = 0, y = 0;
-        for (int i = 0; i <= index; i++){
-            x = i%xDimension;
-            if (x == 0){
-                y++;
-            }
-        }
-        // say we have x and y
-        if (y%2 == 0){
-            childIndex.add(index - xDimension);
-            if (x%2 == 0) {
-                childIndex.add(index + 1);
-                childIndex.add(index - xDimension + 1);
-            } else {
-                childIndex.add(index - 1);
-                childIndex.add(index - xDimension - 1);
-            }
-        } else {
-            childIndex.add(index + xDimension);
-            if (x%2 == 0) {
-                childIndex.add(index + 1);
-                childIndex.add(index + xDimension + 1);
-            } else {
-                childIndex.add(index - 1);
-                childIndex.add(index + xDimension - 1);
-            }
-        }
-        Collections.sort(childIndex);
-        return childIndex;
+        // Generate blank maze
+        super.GenerateBlankMaze();
+
+        // Generate automatic maze
+        super.GenerateAutoMaze();
+
+        // Initialise the start and end cells
+        this.InitialiseStartEndCells();
+
+        // Generate display data
+        this.GenerateDisplayData();
+
+        // Create table in the database
+        MazeDatabase_new.getInstance().CreateTable(this, "Child", lastEditTime);
+
     }
-     int[] startEndCells = new int[]{0,1,xDimension,xDimension+1,cellCount-1,cellCount-2,cellCount-xDimension-1,
-     cellCount-xDimension-2};
-     for (int i = 0; i < startEndCells.length; i++){
-     this.ReplaceCell(new MazeCell(3,1,1,1,1),i);
-     mazeData[startEndCells[i]].setValue(3);
-     }
-     */
+
+    private void InitialiseStartEndCells() throws IOException {
+
+        int[] cells = new int[]{0,1,xDimension,xDimension+1,cellCount-1,cellCount-2,cellCount-xDimension-1,cellCount-xDimension-2};
+        for (int cell : cells) {
+            this.ReplaceCell(new MazeCell(3, 0, 0, 0, 0), cell);
+        }
+
+    }
+
+    //
+    @Override
+    public void GenerateDisplayData() throws IOException {
+
+        //
+        this.displayData = new UIPanelDisplayCell[this.cellCount];
+
+        //
+        for (int i = 0; i < this.cellCount; i++){
+            UIPanelDisplayCell newPanel = new UIPanelDisplayCell(this.mazeData[i],i);
+            this.displayData[i] = newPanel;
+        }
+
+        //
+        if (startImagePath != null){
+            super.InsertImage(startImagePath,0,2,2);
+        }
+        if (endImagePath != null){
+            super.InsertImage(endImagePath,cellCount-xDimension-2,2,2);
+        }
+        if (logoImagePath != null){
+            super.InsertImage(logoImagePath,logoIndex,1,1);
+        }
+
+    }
     
 }

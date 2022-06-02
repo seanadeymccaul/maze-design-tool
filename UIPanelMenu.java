@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.sql.SQLException;
 
 public class UIPanelMenu extends JPanel {
@@ -42,11 +43,13 @@ public class UIPanelMenu extends JPanel {
                     UIFormLoader newWindow = new UIFormLoader();
                 } catch (SQLException ex) {
                     ex.printStackTrace();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
                 }
             }
         });
 
-        export = new JButton("Export"); add(export);
+        export = new JButton("Publish"); add(export);
         export.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
