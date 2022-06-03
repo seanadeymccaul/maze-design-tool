@@ -6,6 +6,8 @@ import java.sql.SQLException;
 
 public class UIFormSaver extends JFrame {
 
+    private Maze maze;
+
     public UIFormSaver() throws SQLException {
 
         new JFrame("Maze Loader");
@@ -31,7 +33,10 @@ public class UIFormSaver extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String text = textField.getText();
                 try {
-                    UI_new.getInstance().display.currentMaze.SaveMaze(text);
+
+                    maze = UI.getInstance().display.GetDisplayedMaze();
+                    MazeDatabase_new.getInstance().SaveTable(maze);
+
                 } catch (SQLException ex) {
                     ex.printStackTrace();
                 }

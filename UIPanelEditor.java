@@ -5,8 +5,10 @@ import java.awt.event.MouseListener;
 
 public class UIPanelEditor extends JPanel implements MouseListener {
 
+    public boolean current;
     private MazeCell currentSelection;
     public MazeCell GetCurrentSelection(){return currentSelection;}
+    public void SetCurrentSelection(MazeCell m){currentSelection = m;}
     private JPanel option1;
     private JPanel option2;
     private JPanel option3;
@@ -76,6 +78,8 @@ public class UIPanelEditor extends JPanel implements MouseListener {
             currentSelection = new MazeCell(1,0,1,0,1);
             option6.setBackground(Color.GREEN);
         }
+        current = true;
+        UI.getInstance().imageSelect.current = false;
     }
 
     @Override

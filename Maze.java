@@ -6,6 +6,9 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
 
 abstract class Maze {
 
@@ -13,12 +16,15 @@ abstract class Maze {
 
     private String name;
     public String GetName(){return name;}
+    public void SetName(String n){name = n;}
 
     private String author;
     public String GetAuthor(){return author;}
+    public void SetAuthor(String n){author = n;}
 
     protected MazeCell[] mazeData;
     public MazeCell[] GetMazeData(){return mazeData;}
+    public void SetMazeData(MazeCell[] d){mazeData = d;}
 
     protected UIPanelDisplayCell[] displayData;
     public UIPanelDisplayCell[] GetDisplayData(){return displayData;}
@@ -27,17 +33,19 @@ abstract class Maze {
     public int GetXDimension(){return xDimension;}
     public int GetYDimension(){return yDimension;}
     public int GetCellCount(){return cellCount;}
-    public int GetLogoIndex(){return logoIndex;}
-    public int GetLogoWidth(){return logoWidth;}
-    public int GetLogoHeight(){return logoHeight;}
+    public void SetXDimension(int x){xDimension = x;}
+    public void SetYDimension(int y){yDimension = y;}
+    public void SetImageList(ArrayList<MazeImage> a){imageList = a;}
+    public ArrayList<Integer> solutionDirections = new ArrayList<>();
 
-    protected String creationTime, lastEditTime, startImagePath, endImagePath, logoImagePath;
-    public String GetCreationTime(){return creationTime;}
+    protected String lastEditTime;
     public String GetLastEditTime(){return lastEditTime;}
-    public String GetStartImagePath(){return startImagePath;}
-    public String GetEndImagePath(){return endImagePath;}
-    public String GetLogoImagePath(){return logoImagePath;}
+    public void SetLastEditTime(String s){lastEditTime = s;}
 
+    protected ArrayList<MazeImage> imageList;
+    public ArrayList<MazeImage> GetImageList(){return imageList;}
+
+    public boolean paintSolution = false;
 
     // Default constructor
 
@@ -54,11 +62,10 @@ abstract class Maze {
         this.cellCount = xDimension * yDimension;
         this.mazeData = new MazeCell[this.cellCount];
         this.lastEditTime = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new java.util.Date());
-        this.logoIndex = GetRandomInt(cellCount-xDimension);
-        this.logoHeight = 1;
-        this.logoWidth = 1;
-        System.out.println(logoIndex);
+        this.imageList = new ArrayList<MazeImage>();
     }
+
+
 
 
     // Generates a blank canvas
@@ -148,28 +155,6 @@ abstract class Maze {
     public void GenerateDisplayData() throws IOException { }
 
     //
-    public void GenerateSavedMaze(String mazeName) throws SQLException, IOException {
-        this.name = mazeName;
-        this.author = MazeDatabase_new.getInstance().GetString(mazeName,"mazeAuthor");
-        this.mazeData = StringArrayToCellArray(MazeDatabase_new.getInstance().GetMazeData(mazeName));
-        this.xDimension = MazeDatabase_new.getInstance().GetInt(mazeName,"xDimension");
-        this.yDimension = MazeDatabase_new.getInstance().GetInt(mazeName,"xDimension");
-        this.cellCount = xDimension * yDimension;
-        this.lastEditTime = MazeDatabase_new.getInstance().GetString(mazeName,"lastEditTime");
-        this.startImagePath = MazeDatabase_new.getInstance().GetString(mazeName,"startImagePath");
-        this.endImagePath = MazeDatabase_new.getInstance().GetString(mazeName,"endImagePath");
-        this.logoImagePath = MazeDatabase_new.getInstance().GetString(mazeName,"logoImagePath");
-        this.logoIndex = MazeDatabase_new.getInstance().GetInt(mazeName,"logoImageIndex");
-        this.logoHeight = MazeDatabase_new.getInstance().GetInt(mazeName,"logoImageHeight");
-        this.logoWidth = MazeDatabase_new.getInstance().GetInt(mazeName,"logoImageWidth");
-    }
-
-    //
-    public void SaveMaze(String tableName) throws SQLException {
-        MazeDatabase_new.getInstance().SetMazeData(tableName,CellArrayToStringArray(mazeData));
-    }
-
-    //
     public void ReplaceCell(MazeCell newCell, int cellIndex){
 
         MazeCell replacement = new MazeCell(newCell.getValue(),newCell.getWallLeft(),newCell.getWallRight(),
@@ -228,43 +213,21 @@ abstract class Maze {
         return false;
     }
 
-    // COMPLETED and TESTED
-    public String[] CellArrayToStringArray(MazeCell[] cellData){
-        String[] mazeDataString = new String[mazeData.length];
-        for (int i = 0; i < cellData.length; i++){
-            String value = Integer.toString(cellData[i].getValue()) + Integer.toString(cellData[i].getWallLeft()) +
-                    Integer.toString(cellData[i].getWallRight()) + Integer.toString(cellData[i].getWallAbove()) +
-                    Integer.toString(cellData[i].getWallBelow());
-            mazeDataString[i] = value;
-        }
-        return mazeDataString;
-    }
-
-    // COMPLETED and TESTED
-    public MazeCell[] StringArrayToCellArray(String[] stringData){
-        MazeCell[] cellData = new MazeCell[stringData.length];
-        for (int i = 0; i < stringData.length; i++){
-            cellData[i] = new MazeCell(Character.getNumericValue(stringData[i].charAt(0)),
-                    Character.getNumericValue(stringData[i].charAt(1)),
-                    Character.getNumericValue(stringData[i].charAt(2)),
-                    Character.getNumericValue(stringData[i].charAt(3)),
-                    Character.getNumericValue(stringData[i].charAt(4)));
-
-        }
-
-        return cellData;
-    }
-
     protected int GetRandomInt(int max){
         return (int)(Math.random()*max);
     }
 
-    public void InsertImage(String path, int index, int height, int width) throws IOException {
-        if ((index + width + ((height-1) * xDimension) <= cellCount)){
-            int scaledWidth = width * 2000 / xDimension;
-            int scaledHeight = height * 2000 / yDimension;
+    public void InsertImage(MazeImage mazeImage) throws IOException {
+
+        // If it is on the top then replace with just a top cell
+
+        System.out.println("Inserting image " + mazeImage.GetPath() + "with index " + mazeImage.GetIndex() + "width " + mazeImage.GetWidth() +
+                "and height " + mazeImage.GetHeight());
+        if ((mazeImage.GetIndex() + mazeImage.GetWidth() + ((mazeImage.GetHeight()-1) * xDimension) <= xDimension*yDimension)){
+            int scaledWidth = mazeImage.GetWidth() * 2000 / xDimension;
+            int scaledHeight = (mazeImage.GetHeight() * 2000 / yDimension);
             // read input image
-            File inputFile = new File(path);
+            File inputFile = new File(mazeImage.GetPath());
             BufferedImage inputImage = ImageIO.read(inputFile);
             // create output image
             BufferedImage outputImage = new BufferedImage(scaledWidth, scaledHeight, inputImage.getType());
@@ -274,12 +237,12 @@ abstract class Maze {
             g2d.dispose();
             // cut it up
             int x = 0, y = 0;
-            for (int i = 0; i < height; i++) {
-                for (int j = 0; j < width; j++) {
-                    mazeData[index + j + (xDimension * i)].setValue(5);
+            for (int i = 0; i < mazeImage.GetHeight(); i++) {
+                for (int j = 0; j < mazeImage.GetWidth(); j++) {
+                    mazeData[mazeImage.GetIndex() + j + (xDimension * i)].setValue(5);
                     BufferedImage croppedImage = outputImage.getSubimage(x, y, 2000 / xDimension, 2000 / yDimension);
                     JLabel picLabel = new JLabel(new ImageIcon(croppedImage));
-                    this.displayData[index + j + (xDimension * i)].add(picLabel);
+                    this.displayData[mazeImage.GetIndex() + j + (xDimension * i)].add(picLabel);
                     x = x + 2000 / xDimension;
                 }
                 x = 0;
@@ -287,4 +250,90 @@ abstract class Maze {
             }
         }
     }
+
+    public boolean Solve(){
+
+        // Boolean list of explored cells
+        Boolean[] exploredCells = new Boolean[mazeData.length];
+        Arrays.fill(exploredCells, false);
+
+        // Int list to keep track of parents
+        int[] parentCells = new int[mazeData.length];
+
+        // An arraylist of the directions
+        ArrayList<Integer> directions = new ArrayList<>();
+
+        // Linked list of next cells to visit
+        LinkedList<Integer> nextToVisit = new LinkedList<>();
+        int start = 0;
+        nextToVisit.add(start);
+
+        // Remove a cell from the list and analyse it
+        while (!nextToVisit.isEmpty()){
+
+            int cur = nextToVisit.remove();
+
+            System.out.println("Checking cell index " + cur);
+
+            // If it is found then return
+            if (mazeData[cur].getValue() == 3){
+                System.out.println("Solution found");
+                int parent = parentCells[mazeData.length-1];
+                while (parent != 0){
+                    directions.add(parent);
+                    parent = parentCells[parent];
+                }
+                this.solutionDirections = directions;
+                return true;
+            }
+
+            // if not then mark it as visited
+            else {
+
+                // mark it as explored
+                exploredCells[cur] = true;
+
+                // add all neighbours to the list if they are valid
+
+                // add the right neighbour
+                if (mazeData[cur].getWallRight() == 0){
+                    if (!exploredCells[cur + 1]){
+                        nextToVisit.add(cur + 1);
+                        //
+                        parentCells[cur + 1] = cur;
+                    }
+                }
+
+                // add the bottom neighbour
+                if (mazeData[cur].getWallBelow() == 0){
+                    if (!exploredCells[cur + xDimension]){
+                        nextToVisit.add(cur + xDimension);
+                        parentCells[cur + xDimension] = cur;
+                    }
+                }
+
+                    // add the top neighbour
+                    if (mazeData[cur].getWallAbove() == 0){
+                        if (!exploredCells[cur - xDimension]){
+                            nextToVisit.add(cur - xDimension);
+                            parentCells[cur - xDimension] = cur;
+                        }
+                    }
+
+                    // add the left neighbour
+                    if (mazeData[cur].getWallLeft() == 0){
+                        System.out.println("Wall left is free " + cur);
+                        if (!exploredCells[cur - 1]){
+                            nextToVisit.add(cur - 1);
+                            parentCells[cur - 1] = cur;
+                        }
+                    }
+            }
+
+        }
+        return false;
+    }
+
+
+
 }

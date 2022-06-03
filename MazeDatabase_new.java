@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,68 +34,99 @@ public class MazeDatabase_new {
         return DatabaseHolder.INSTANCE;
     }
 
-    //
-    public void CreateTable(Maze maze, String mazeType, String lastEditDate) throws SQLException {
+    public void CreateTable(Maze maze, String mazeType) throws SQLException {
 
         // Create the table
         String sql = "CREATE TABLE " + maze.GetName() + " (id int NOT NULL AUTO_INCREMENT, mazeData VARCHAR(5), " +
-                "mazeAuthor VARCHAR(64), mazeType TEXT(64), xDimension INT, yDimension INT, startImagePath VARCHAR(64), " +
-                "endImagePath VARCHAR(64), logoImagePath VARCHAR(64), logoImageIndex INT, logoImageHeight INT, " +
-                "logoImageWidth INT, creationTime VARCHAR(64), lastEditTime VARCHAR(64), PRIMARY KEY (id));";
+                "imagePath VARCHAR(64), imageIndex INT, imageHeight INT, imageWidth INT, mazeAuthor VARCHAR(64), " +
+                "mazeType VARCHAR(64), xDimension INT, yDimension INT, lastEditTime " + "VARCHAR(64), PRIMARY KEY (id));";
         PreparedStatement statement = connection.prepareStatement(sql);
         statement.execute();
 
-        // Insert the mazeData
+        // Set the mazeData
         for (int i = 0; i < maze.GetMazeData().length; i++){
             sql = "INSERT INTO " + maze.GetName() + " (mazeData) VALUES (" +
-                    maze.CellArrayToStringArray(maze.GetMazeData())[i] + ");";
+                    CellArrayToStringArray(maze.GetMazeData())[i] + ");";
             statement = connection.prepareStatement(sql);
             statement.execute();
         }
 
-        // Insert essential information
+        // Insert maze information
         sql = "UPDATE " + maze.GetName() + " SET mazeType = '" + mazeType + "', xDimension = " + maze.GetXDimension() +
-                ", mazeAuthor = '" + maze.GetAuthor() + "', yDimension = " + maze.GetYDimension() + ", creationTime = '" +
-                lastEditDate + "', lastEditTime = '" + lastEditDate + "' WHERE id = " + 1 + ";";
+                ", yDimension = " + maze.GetYDimension() + ", mazeAuthor = '" + maze.GetAuthor() + "', lastEditTime = '" +
+                new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new java.util.Date()) + "' WHERE id = 1;";
         statement = connection.prepareStatement(sql);
         statement.execute();
 
-        // Insert image information
-        sql = "UPDATE " + maze.GetName() + " SET startImagePath = '" + maze.GetStartImagePath() + "', endImagePath = '" +
-                maze.GetEndImagePath() + "', logoImagePath = '" + maze.GetLogoImagePath() + "', logoImageIndex = " +
-                maze.GetLogoIndex() + ", logoImageHeight = " + maze.GetLogoHeight() + ", logoImageWidth = " + maze.GetLogoWidth() +
-                " WHERE id = 1;";
-        System.out.println(sql);
-        statement = connection.prepareStatement(sql);
-        statement.execute();
+        // Insert the image data
+        int i = 0;
+        for (MazeImage mazeImage : maze.GetImageList()){
+            SetString(maze.GetName(),"imagePath",mazeImage.GetPath(),i+1);
+            SetInt(maze.GetName(),"imageIndex",mazeImage.GetIndex(),i+1);
+            SetInt(maze.GetName(),"imageHeight",mazeImage.GetHeight(),i+1);
+            SetInt(maze.GetName(),"imageWidth",mazeImage.GetWidth(),i+1);
+        }
 
     }
 
-    //
-    public Maze[] GetMazes() throws SQLException, IOException {
+    public void SaveTable(Maze maze) throws SQLException {
+
+        // Update the maze data
+        SetStringColumn(maze.GetName(),"mazeData", CellArrayToStringArray(maze.GetMazeData()));
+
+        // Update the image data
+        int i = 0;
+        for (MazeImage mazeImage : maze.GetImageList()){
+            SetString(maze.GetName(),"imagePath",mazeImage.GetPath(),i+1);
+            SetInt(maze.GetName(),"imageIndex",mazeImage.GetIndex(),i+1);
+            SetInt(maze.GetName(),"imageHeight",mazeImage.GetHeight(),i+1);
+            SetInt(maze.GetName(),"imageWidth",mazeImage.GetWidth(),i+1);
+            i = i + 1;
+        }
+
+    }
+
+    public Maze LoadTable(String tableName) throws SQLException {
+
+        Maze maze = null;
+
+        // Check if adult or child maze
+        if (Objects.equals(GetString(tableName, "mazeType"), "Adult")){
+            maze = new MazeAdult();
+        } else if (Objects.equals(GetString(tableName, "mazeType"),"Child")){
+            maze = new MazeChild();
+        }
 
         //
-        String[] mazeNames = this.GetTableNames();
-        Maze[] mazes = new Maze[mazeNames.length];
+        if (maze != null) {
 
-        // get each maze
-        for (int i = 0; i < mazeNames.length; i++) {
-            String currentType = GetString(mazeNames[i],"mazeType");
-            // add it to the array depending on the adult or child
-            if (Objects.equals(currentType, "Adult")) {
-                Maze currentMaze = new MazeAdult();
-                currentMaze.GenerateSavedMaze(mazeNames[i]);
-                mazes[i] = currentMaze;
-            } else if (Objects.equals(currentType, "Child")) {
-                Maze currentMaze = new MazeChild();
-                currentMaze.GenerateSavedMaze(mazeNames[i]);
-                mazes[i] = currentMaze;
+            // Set maze information
+            maze.SetName(tableName);
+            maze.SetAuthor(GetString(tableName,"mazeAuthor"));
+            maze.SetMazeData(StringArrayToCellArray(GetStringColumn(tableName,"mazeData")));
+            maze.SetXDimension(GetInt(tableName,"xDimension"));
+            maze.SetYDimension(GetInt(tableName,"yDimension"));
+            maze.SetLastEditTime(GetString(tableName,"lastEditTime"));
+
+            // Set image information
+            String[] imagePaths = GetStringColumn(tableName,"imagePath");
+            Integer[] imageIndexes = GetIntegerColumn(tableName,"imageIndex");
+            Integer[] imageHeights = GetIntegerColumn(tableName,"imageHeight");
+            Integer[] imageWidths = GetIntegerColumn(tableName,"imageWidth");
+            ArrayList<MazeImage> arrayList = new ArrayList<>();
+            for (int i = 0; i < imagePaths.length; i++){
+                if (imagePaths[i] != null){
+                    arrayList.add(new MazeImage(imagePaths[i],imageWidths[i],imageHeights[i],imageIndexes[i]));
+                }
             }
+            maze.SetImageList(arrayList);
         }
-        return mazes;
+
+        return maze;
+
     }
 
-    //
+
     public String[] GetTableNames() throws SQLException {
         List<String> namesList = new ArrayList<String>();
         PreparedStatement statement = this.connection.prepareStatement("SELECT table_name FROM information_schema." +
@@ -107,35 +139,7 @@ public class MazeDatabase_new {
         return names;
     }
 
-    //
-    public void SetMazeData(String tableName, String[] mazeData) throws SQLException {
 
-        List<String> tableNames = Arrays.asList(GetTableNames());
-
-        if (tableNames.contains(tableName)){
-            for (int i = 0; i < mazeData.length; i++){
-                String sql = "UPDATE " + tableName + " SET mazeData = " + mazeData[i] + " WHERE id = " + (i+1) + ";";
-                PreparedStatement statement = connection.prepareStatement(sql);
-                statement.execute();
-            }
-        }
-
-    }
-
-    //
-    public String[] GetMazeData(String tableName) throws SQLException {
-        List<String> dataList = new ArrayList<String>();
-        String sql = "SELECT mazeData FROM " + tableName + ";";
-        PreparedStatement statement = connection.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
-        ResultSet resultSet = statement.executeQuery();
-        while (resultSet.next()){
-            dataList.add(resultSet.getString(1));
-        }
-        String[] data = dataList.toArray(new String[dataList.size()]);
-        return data;
-    }
-
-    //
     public String GetString(String tableName, String columnName) throws SQLException {
         String result = "";
         String sql = "SELECT " + columnName + " FROM " + tableName + " WHERE id = 1";
@@ -147,22 +151,93 @@ public class MazeDatabase_new {
         return result;
     }
 
-    public String[] GetStringArray(String tableName, String[] columnNames){
-        String[] h = new String[1];
-        return h;
-    }
-
-    //
     public int GetInt(String tableName, String columnName) throws SQLException {
         int result = 0;
         String sql = "SELECT " + columnName + " FROM " + tableName + " WHERE id = 1";
-        System.out.println(sql);
         PreparedStatement statement = connection.prepareStatement(sql);
         ResultSet resultSet = statement.executeQuery();
         while (resultSet.next()){
             result = resultSet.getInt(1);
         }
         return result;
+    }
+
+    public void SetString(String tableName, String columnName, String data, int id) throws SQLException {
+        String sql = "UPDATE " + tableName + " SET " + columnName + " = '" + data + "' WHERE id = " + id + ";";
+
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.execute();
+    }
+
+    public void SetInt(String tableName, String columnName, int data, int id) throws SQLException {
+        String sql = "UPDATE " + tableName + " SET " + columnName + " = " + data + " WHERE id = " + id + ";";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.execute();
+    }
+
+    public String[] GetStringColumn(String tableName, String columnName) throws SQLException {
+        ArrayList<String> arrayList = new ArrayList<>();
+        String sql = "SELECT " + columnName + " FROM " + tableName + ";";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        ResultSet resultSet = statement.executeQuery();
+        while (resultSet.next()){
+            arrayList.add(resultSet.getString(1));
+        }
+        String[] data = arrayList.toArray(new String[arrayList.size()]);
+        return data;
+    }
+
+    public Integer[] GetIntegerColumn(String tableName, String columnName) throws SQLException {
+        ArrayList<Integer> arrayList = new ArrayList<>();
+        String sql = "SELECT " + columnName + " FROM " + tableName + ";";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        ResultSet resultSet = statement.executeQuery();
+        while (resultSet.next()){
+            arrayList.add(resultSet.getInt(1));
+        }
+        Integer[] data = arrayList.toArray(new Integer[arrayList.size()]);
+        return data;
+    }
+
+    public void SetStringColumn(String tableName, String columnName, String[] data) throws SQLException {
+        for (int i = 0; i < data.length; i++){
+            String sql = "UPDATE " + tableName + " SET " + columnName + " = " + data[i] + " WHERE id = " + (i+1) + ";";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.execute();
+        }
+    }
+
+    public void SetIntColumn(String tableName, String columnName, int[] data) throws SQLException {
+        for (int i = 0; i < data.length; i++){
+            String sql = "UPDATE " + tableName + " SET " + columnName + " = " + data[i] + " WHERE id = " + (i+1) + ";";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.execute();
+        }
+    }
+
+    public String[] CellArrayToStringArray(MazeCell[] cellData){
+        String[] mazeDataString = new String[cellData.length];
+        for (int i = 0; i < cellData.length; i++){
+            String value = Integer.toString(cellData[i].getValue()) + Integer.toString(cellData[i].getWallLeft()) +
+                    Integer.toString(cellData[i].getWallRight()) + Integer.toString(cellData[i].getWallAbove()) +
+                    Integer.toString(cellData[i].getWallBelow());
+            mazeDataString[i] = value;
+        }
+        return mazeDataString;
+    }
+
+    public MazeCell[] StringArrayToCellArray(String[] stringData){
+        MazeCell[] cellData = new MazeCell[stringData.length];
+        for (int i = 0; i < stringData.length; i++){
+            cellData[i] = new MazeCell(Character.getNumericValue(stringData[i].charAt(0)),
+                    Character.getNumericValue(stringData[i].charAt(1)),
+                    Character.getNumericValue(stringData[i].charAt(2)),
+                    Character.getNumericValue(stringData[i].charAt(3)),
+                    Character.getNumericValue(stringData[i].charAt(4)));
+
+        }
+
+        return cellData;
     }
 
 

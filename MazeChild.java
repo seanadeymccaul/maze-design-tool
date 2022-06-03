@@ -3,10 +3,6 @@ import java.sql.SQLException;
 
 public class MazeChild extends Maze{
 
-    private byte[] startImage;
-    private byte[] endImage;
-
-
     public MazeChild() throws SQLException {
         super();
     }
@@ -28,7 +24,7 @@ public class MazeChild extends Maze{
         this.GenerateDisplayData();
 
         // Create the table in the database
-        MazeDatabase_new.getInstance().CreateTable(this,"Child", lastEditTime);
+        MazeDatabase_new.getInstance().CreateTable(this,"Child");
 
     }
 
@@ -48,7 +44,7 @@ public class MazeChild extends Maze{
         this.GenerateDisplayData();
 
         // Create table in the database
-        MazeDatabase_new.getInstance().CreateTable(this, "Child", lastEditTime);
+        MazeDatabase_new.getInstance().CreateTable(this, "Child");
 
     }
 
@@ -70,19 +66,15 @@ public class MazeChild extends Maze{
 
         //
         for (int i = 0; i < this.cellCount; i++){
-            UIPanelDisplayCell newPanel = new UIPanelDisplayCell(this.mazeData[i],i);
-            this.displayData[i] = newPanel;
+            if (mazeData[i].getValue() < 6){
+                UIPanelDisplayCell newPanel = new UIPanelDisplayCell(this.mazeData[i],i);
+                this.displayData[i] = newPanel;
+            }
         }
 
         //
-        if (startImagePath != null){
-            super.InsertImage(startImagePath,0,2,2);
-        }
-        if (endImagePath != null){
-            super.InsertImage(endImagePath,cellCount-xDimension-2,2,2);
-        }
-        if (logoImagePath != null){
-            super.InsertImage(logoImagePath,logoIndex,1,1);
+        for (MazeImage i : imageList){
+            InsertImage(i);
         }
 
     }

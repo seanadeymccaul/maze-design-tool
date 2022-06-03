@@ -1,41 +1,46 @@
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 
 public class UIPanelDisplayCell extends JPanel implements MouseListener {
 
     public MazeCell cell;
     public int index;
-    public int borderWidth;
-    public int cellWidth;
 
     public UIPanelDisplayCell(MazeCell cell, int index){
         this.cell = cell;
         this.index = index;
-        this.borderWidth = 6 - UI_new.getInstance().display.currentMaze.cellCount / 2000;
-        this.cellWidth = UI_new.getInstance().display.currentMaze.cellCount / 2000;
         new JPanel();
         addMouseListener(this);
     }
 
-    public void CreateBorder() {
-        setBorder(BorderFactory.createMatteBorder(cell.getWallAbove() * borderWidth, cell.getWallLeft() * borderWidth,
-                cell.getWallBelow() * borderWidth, cell.getWallRight() * borderWidth, Color.BLACK));
-
+    public void RemoveBorder(){
+        setBorder(BorderFactory.createMatteBorder(0,0,0,0,Color.BLACK));
     }
 
-    public void PaintCell(){
-        if (this.cell.getValue() == 3){
-            setBackground(Color.RED);
-        } else {
-            setBackground(Color.WHITE);
+    public void paintComponent(Graphics g){
+        super.paintComponent(g);
+        int cellHeight = 2000/ UI.getInstance().display.GetDisplayedMaze().GetYDimension();
+        int cellWidth = 2000/ UI.getInstance().display.GetDisplayedMaze().GetXDimension();
+        int borderWidth = 6 - (UI.getInstance().display.GetDisplayedMaze().GetXDimension()*UI.getInstance().display.GetDisplayedMaze().GetYDimension()) /2000;
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setColor(Color.RED);
+        if (cell.getWallAbove() == 1){
+            g2d.fillRect(0,0,cellWidth,borderWidth);
+        }
+        if (cell.getWallBelow() == 1){
+            g2d.fillRect(0,cellHeight-borderWidth,cellWidth,borderWidth);
+        }
+        if (cell.getWallLeft() == 1){
+            g2d.fillRect(0,0,borderWidth,cellHeight);
+        }
+        if (cell.getWallRight() == 1){
+            g2d.fillRect(cellWidth-borderWidth,0,borderWidth,cellHeight);
         }
     }
+
 
     public void InsertImage(JLabel picLabel) throws IOException {
         add(picLabel);
@@ -44,19 +49,32 @@ public class UIPanelDisplayCell extends JPanel implements MouseListener {
     @Override
     public void mouseClicked(MouseEvent e) {
 
-
-
-        if (UI_new.getInstance().editor.GetCurrentSelection() != null){
-            System.out.println("Above, below, left right = " + UI_new.getInstance().editor.GetCurrentSelection().getWallAbove() +
-                    UI_new.getInstance().editor.GetCurrentSelection().getWallBelow() +
-                    UI_new.getInstance().editor.GetCurrentSelection().getWallLeft() +
-                    UI_new.getInstance().editor.GetCurrentSelection().getWallRight());
-            UI_new.getInstance().display.currentMaze.ReplaceCell(UI_new.getInstance().editor.GetCurrentSelection(),this.index);
+        // If a panel has been selected for insert
+        if (UI.getInstance().editor.current){
+            System.out.println("Above, below, left right = " + UI.getInstance().editor.GetCurrentSelection().getWallAbove() +
+                    UI.getInstance().editor.GetCurrentSelection().getWallBelow() +
+                    UI.getInstance().editor.GetCurrentSelection().getWallLeft() +
+                    UI.getInstance().editor.GetCurrentSelection().getWallRight());
+            UI.getInstance().display.GetDisplayedMaze().ReplaceCell(UI.getInstance().editor.GetCurrentSelection(),this.index);
             try {
-                UI_new.getInstance().display.UpdateDisplay();
+                UI.getInstance().display.UpdateDisplay();
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
+        }
+        // If a image has been selected for insert
+        else if (UI.getInstance().imageSelect.current){
+            //
+            try {
+                UI.getInstance().imageSelect.GetSelectedImage().SetIndex(this.index);
+                UI.getInstance().display.GetDisplayedMaze().GetImageList().add(UI.getInstance().imageSelect.GetSelectedImage());
+                UI.getInstance().imageSelect.current = false;
+                UI.getInstance().display.UpdateDisplay();
+
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+
         }
 
         }

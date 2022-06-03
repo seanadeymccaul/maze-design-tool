@@ -2,14 +2,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.sql.SQLException;
 
-public class UI_new extends JFrame{
+public class UI extends JFrame{
 
     public UIPanelDisplay display;
     public UIPanelEditor editor;
     public UIPanelSolution solution;
     public UIPanelImageSelect imageSelect;
 
-    protected UI_new() throws SQLException {
+    protected UI() throws SQLException {
 
         // Set up JFrame
         new JFrame("CAB302 Maze App");
@@ -45,18 +45,18 @@ public class UI_new extends JFrame{
     }
 
     private static class UIHolder {
-        private static UI_new INSTANCE;
+        private static UI INSTANCE;
 
         static {
             try {
-                INSTANCE = new UI_new();
+                INSTANCE = new UI();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    public static UI_new getInstance(){
+    public static UI getInstance(){
         return UIHolder.INSTANCE;
     }
 }

@@ -1,5 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.Objects;
 
 public class UIPanelSolution extends JPanel{
@@ -18,7 +21,8 @@ public class UIPanelSolution extends JPanel{
 
         // Button and label for solution
         JPanel currentSelection = new JPanel(new GridLayout(2,1));JButton changeButton = new JButton("Check Solution");
-        add(changeButton,BorderLayout.NORTH); currentSelection.add(new JLabel(this.solutionState,SwingConstants.CENTER));
+        add(changeButton,BorderLayout.NORTH); JPanel d = new JPanel();
+        JLabel c = new JLabel(this.solutionState,SwingConstants.CENTER); d.add(c); currentSelection.add(d);
         currentSelection.add(changeButton); add(currentSelection,BorderLayout.NORTH);
 
         // Dimension options
@@ -34,6 +38,50 @@ public class UIPanelSolution extends JPanel{
         // Add padding
         JPanel paddingW = new JPanel(); paddingW.setPreferredSize(new Dimension(100,50)); add(paddingW,BorderLayout.WEST);
         JPanel paddingE = new JPanel(); paddingE.setPreferredSize(new Dimension(100,50)); add(paddingE,BorderLayout.EAST);
+
+        // Action event for solution generator
+        changeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                UI.getInstance().display.GetDisplayedMaze().Solve();
+
+                if (UI.getInstance().display.GetDisplayedMaze().Solve()){
+
+                    c.setText("SOLUTION AVAILABLE");
+                    d.setBackground(Color.GREEN);
+
+
+                } else {
+
+                    c.setText("NO SOLUTION FOUND");
+                    d.setBackground(Color.RED);
+
+                }
+
+                UI.getInstance().pack();
+
+            }
+        });
+
+        paintButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                if (UI.getInstance().display.GetDisplayedMaze().Solve()){
+
+                    UI.getInstance().display.GetDisplayedMaze().paintSolution = true;
+                    try {
+                        UI.getInstance().display.UpdateDisplay();
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+
+                }
+
+            }
+        });
+
 
     }
 

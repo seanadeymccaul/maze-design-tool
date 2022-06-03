@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -25,7 +26,7 @@ public class MazeAdult extends Maze{
         this.GenerateDisplayData();
 
         // Create the table in the database
-        MazeDatabase_new.getInstance().CreateTable(this,"Adult", lastEditTime);
+        MazeDatabase_new.getInstance().CreateTable(this,"Adult");
 
         }
 
@@ -45,13 +46,13 @@ public class MazeAdult extends Maze{
         this.GenerateDisplayData();
 
         // Create table in the database
-        MazeDatabase_new.getInstance().CreateTable(this, "Adult", lastEditTime);
+        MazeDatabase_new.getInstance().CreateTable(this, "Adult");
 
     }
 
     private void InitialiseStartEndCells() throws IOException {
 
-        ReplaceCell(new MazeCell(3,0,0,0,0),0);
+        ReplaceCell(new MazeCell(2,0,0,0,0),0);
         ReplaceCell(new MazeCell(3,0,0,0,0),this.cellCount-1);
 
     }
@@ -60,23 +61,28 @@ public class MazeAdult extends Maze{
     public void GenerateDisplayData() throws IOException {
 
         //
-        this.displayData = new UIPanelDisplayCell[this.cellCount];
+        this.displayData = new UIPanelDisplayCell[xDimension*yDimension];
 
         //
-        for (int i = 0; i < this.cellCount; i++){
-            UIPanelDisplayCell newPanel = new UIPanelDisplayCell(this.mazeData[i],i);
-            this.displayData[i] = newPanel;
+        for (int i = 0; i < (xDimension*yDimension); i++){
+            if (mazeData[i].getValue() < 6){
+                UIPanelDisplayCell newPanel = new UIPanelDisplayCell(this.mazeData[i],i);
+                if (solutionDirections.size() > 1){
+                    if (solutionDirections.contains(i)){
+                        newPanel.setBackground(Color.GREEN);
+                    }
+                }
+
+                this.displayData[i] = newPanel;
+            }
         }
 
-        //
-        if (startImagePath != null){
-            super.InsertImage(startImagePath,0,1,1);
-        }
-        if (endImagePath != null){
-            super.InsertImage(endImagePath,cellCount-1,1,1);
-        }
-        if (logoImagePath != null){
-            super.InsertImage(logoImagePath,logoIndex,logoHeight,logoWidth);
+        // for the images
+        if (imageList.size() > 0){
+            for (MazeImage i : imageList){
+                super.InsertImage(i);
+                System.out.println("Calling insert for " + i.GetPath());
+            }
         }
 
     }

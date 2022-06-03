@@ -7,6 +7,8 @@ import java.sql.SQLException;
 
 public class UIFormCreator extends JFrame {
 
+    private Maze maze;
+
     public UIFormCreator() {
 
         // Set up the main JFrame
@@ -84,54 +86,55 @@ public class UIFormCreator extends JFrame {
         JButton createMazeButton = new JButton("Create Maze");
         add(createMazeButton, BorderLayout.SOUTH);
 
+        // Pack the display
         pack();
 
+        // Action event for create button
         createMazeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 String mazeName = nameField.getText();
                 String authorName = authorField.getText();
-                System.out.println(mazeName);
                 int xDimension = (Integer)xDimensionSelection.getValue();
                 int yDimension = (Integer)yDimensionSelection.getValue();
 
                 if (mazeTypeSelection.getSelectedIndex() == 0){
                     try {
-                        UI_new.getInstance().display.currentMaze = new MazeAdult(mazeName,authorName,xDimension,yDimension);
-                        // add start image and end image
-                        UI_new.getInstance().display.currentMaze.startImagePath = startImageField.getText();
-                        UI_new.getInstance().display.currentMaze.endImagePath = endImageField.getText();
-                        UI_new.getInstance().display.currentMaze.logoImagePath = logoImageField.getText();
-                        UI_new.getInstance().display.currentMaze.logoWidth = (Integer)widthSelection.getValue();
-                        UI_new.getInstance().display.currentMaze.logoHeight = (Integer)heightSelection.getValue();
+
+                        maze = new MazeAdult(mazeName,authorName,xDimension,yDimension);
+
                         if (mazeGenerationSelection.getSelectedIndex() == 0){
-                            UI_new.getInstance().display.currentMaze.GenerateAutoMaze();
-                            UI_new.getInstance().display.UpdateDisplay();
+
+                            maze.GenerateAutoMaze();
+                            UI.getInstance().display.SetDisplayedMaze(maze);
+
                         } else if (mazeGenerationSelection.getSelectedIndex() == 1){
-                            UI_new.getInstance().display.currentMaze.GenerateBlankMaze();
-                            UI_new.getInstance().display.UpdateDisplay();
+
+                            maze.GenerateBlankMaze();
+                            UI.getInstance().display.SetDisplayedMaze(maze);
+
                         }
-                    } catch (SQLException ex) {
-                        ex.printStackTrace();
-                    } catch (IOException ex) {
+                    } catch (SQLException | IOException ex) {
                         ex.printStackTrace();
                     }
                 } else if (mazeTypeSelection.getSelectedIndex() == 1){
                     try {
-                        UI_new.getInstance().display.currentMaze = new MazeChild(mazeName,authorName,xDimension,yDimension);
-                        UI_new.getInstance().display.currentMaze.startImagePath = startImageField.getText();
-                        UI_new.getInstance().display.currentMaze.endImagePath = endImageField.getText();
-                        UI_new.getInstance().display.currentMaze.logoImagePath = logoImageField.getText();
+
+                        maze = new MazeChild(mazeName,authorName,xDimension,yDimension);
+
                         if (mazeGenerationSelection.getSelectedIndex() == 0){
-                            UI_new.getInstance().display.currentMaze.GenerateAutoMaze();
-                            UI_new.getInstance().display.UpdateDisplay();
+
+                            maze.GenerateAutoMaze();
+                            UI.getInstance().display.SetDisplayedMaze(maze);
+
                         } else if (mazeGenerationSelection.getSelectedIndex() == 1){
-                            UI_new.getInstance().display.currentMaze.GenerateBlankMaze();
-                            UI_new.getInstance().display.UpdateDisplay();
+
+                            maze.GenerateBlankMaze();
+                            UI.getInstance().display.SetDisplayedMaze(maze);
+
                         }
-                    } catch (SQLException ex) {
-                        ex.printStackTrace();
-                    } catch (IOException ex) {
+                    } catch (SQLException | IOException ex) {
                         ex.printStackTrace();
                     }
                 }
