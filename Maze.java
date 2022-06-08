@@ -41,20 +41,32 @@ abstract class Maze {
     protected String lastEditTime;
     public String GetLastEditTime(){return lastEditTime;}
     public void SetLastEditTime(String s){lastEditTime = s;}
+    protected String creationTime;
+    public String GetCreationTime(){return creationTime;}
+    public void SetCreationTime(String c){creationTime = c;}
 
     protected ArrayList<MazeImage> imageList;
     public ArrayList<MazeImage> GetImageList(){return imageList;}
 
     public boolean paintSolution = false;
+    public int cellsReached;
+    public int deadEnds;
 
-    // Default constructor
+    /**
+     * Default constructor
+     * @throws SQLException
+     */
+    public Maze() { }
 
-    public Maze() throws SQLException { }
-
-
-    // New maze constructor
-
-    public Maze(String name,String author, int xDimension, int yDimension) throws SQLException, IOException {
+    /**
+     * Constructor for creating a new maze instance in the database
+     * @param name the name to save the maze as
+     * @param author the name of the author
+     * @param xDimension the cell count of the maze width
+     * @param yDimension the cell count of the maze height
+     * @throws SQLException creates a new table and populates with data in mariadb
+     */
+    public Maze(String name,String author, int xDimension, int yDimension) throws SQLException {
         this.name = name;
         this.author = author;
         this.xDimension = xDimension;
@@ -65,11 +77,11 @@ abstract class Maze {
         this.imageList = new ArrayList<MazeImage>();
     }
 
-
-
-
-    // Generates a blank canvas
-
+    /**
+     * Populates the maze data with the content of a blank array
+     * @throws IOException inserts the start and end images from file
+     * @throws SQLException saves the maze information in database
+     */
     public void GenerateBlankMaze() throws IOException, SQLException {
         for (int i = 0; i < this.cellCount; i++){
             int id = 1, wallAbove = 0, wallBelow = 0, wallLeft = 0, wallRight = 0;
@@ -89,9 +101,11 @@ abstract class Maze {
         }
     }
 
-
-    // Generates a fully populated maze with solution
-
+    /**
+     * Populates the maze data with the content of an automatic generated array
+     * @throws IOException inserts the start and end images from file
+     * @throws SQLException saves the maze information in database
+     */
     public void GenerateAutoMaze() throws IOException, SQLException {
         int i = 0;
         String lastMove = "";
@@ -150,11 +164,17 @@ abstract class Maze {
         }
     }
 
-    // Override by adult and child classes
-
+    /**
+     * Populates the display data array with UIPanelDisplayCells depending on mazeData and imageList
+     * @throws IOException
+     */
     public void GenerateDisplayData() throws IOException { }
 
-    //
+    /**
+     * Replace a mazeCell item in the maze data array with a new mazeCell, and updates the borders of surrounding cells
+     * @param newCell new mazeCell to insert
+     * @param cellIndex the index of maze data array where the cell is to be replaced
+     */
     public void ReplaceCell(MazeCell newCell, int cellIndex){
 
         MazeCell replacement = new MazeCell(newCell.getValue(),newCell.getWallLeft(),newCell.getWallRight(),
@@ -183,46 +203,13 @@ abstract class Maze {
         this.mazeData[cellIndex] = replacement;
     }
 
-    public boolean CheckTopBorder(int cellIndex){
-        if (cellIndex < this.xDimension){
-            return true;
-        }
-        return false;
-    }
-
-    public boolean CheckBottomBorder(int cellIndex){
-        if (cellIndex >= this.xDimension * (this.yDimension - 1)){
-            return true;
-        }
-        return false;
-    }
-
-    public boolean CheckLeftBorder(int cellIndex){
-        if (cellIndex%this.xDimension == 0){
-            return true;
-        }
-        return false;
-    }
-
-    public boolean CheckRightBorder(int cellIndex){
-        if (cellIndex%this.xDimension == this.xDimension - 1){
-            return true;
-        } else if (cellIndex + 1 == this.cellCount){
-            return true;
-        }
-        return false;
-    }
-
-    protected int GetRandomInt(int max){
-        return (int)(Math.random()*max);
-    }
-
+    /**
+     * Takes an image and transforms it before adding it to the display data array
+     * @param mazeImage mazeImage object to add to the array
+     * @throws IOException attempts to access file from mazeImage path
+     */
     public void InsertImage(MazeImage mazeImage) throws IOException {
 
-        // If it is on the top then replace with just a top cell
-
-        System.out.println("Inserting image " + mazeImage.GetPath() + "with index " + mazeImage.GetIndex() + "width " + mazeImage.GetWidth() +
-                "and height " + mazeImage.GetHeight());
         if ((mazeImage.GetIndex() + mazeImage.GetWidth() + ((mazeImage.GetHeight()-1) * xDimension) <= xDimension*yDimension)){
             int scaledWidth = mazeImage.GetWidth() * 2000 / xDimension;
             int scaledHeight = (mazeImage.GetHeight() * 2000 / yDimension);
@@ -239,7 +226,22 @@ abstract class Maze {
             int x = 0, y = 0;
             for (int i = 0; i < mazeImage.GetHeight(); i++) {
                 for (int j = 0; j < mazeImage.GetWidth(); j++) {
-                    mazeData[mazeImage.GetIndex() + j + (xDimension * i)].setValue(5);
+                    // if i = 0 replace it with id of 5 and also top
+                    int topValue = 0, bottomValue = 0, leftValue = 0, rightValue = 0;
+                    if (i == 0){
+                        topValue = 1;
+                    }
+                    if (j == 0){
+                        leftValue = 1;
+                    }
+                    if (j == mazeImage.GetWidth()-1){
+                        rightValue = 1;
+                    }
+                    if (i == mazeImage.GetHeight()-1){
+                        bottomValue = 1;
+                    }
+                    ReplaceCell(new MazeCell(5,leftValue,rightValue,topValue,bottomValue),
+                            mazeImage.GetIndex() + j + (xDimension * i));
                     BufferedImage croppedImage = outputImage.getSubimage(x, y, 2000 / xDimension, 2000 / yDimension);
                     JLabel picLabel = new JLabel(new ImageIcon(croppedImage));
                     this.displayData[mazeImage.GetIndex() + j + (xDimension * i)].add(picLabel);
@@ -251,6 +253,10 @@ abstract class Maze {
         }
     }
 
+    /**
+     * Attempts to find an optimal solution for the current maze data, if possible it sets solutionDirections, deadEnds, and cellsReached
+     * @return true if a solution is found
+     */
     public boolean Solve(){
 
         // Boolean list of explored cells
@@ -284,6 +290,23 @@ abstract class Maze {
                     parent = parentCells[parent];
                 }
                 this.solutionDirections = directions;
+                double cellsReached2 = (double)solutionDirections.size()/(xDimension*yDimension);
+                this.cellsReached = (int)(cellsReached2 * 100);
+
+
+                // Get dead ends
+                int deadEnds = 0;
+                for (int i = 0; i < mazeData.length; i++){
+                    int total = mazeData[i].getWallAbove() + mazeData[i].getWallRight() + mazeData[i].getWallLeft() +
+                            mazeData[i].getWallBelow();
+                    if (total > 2){
+                        deadEnds++;
+                    }
+                }
+                double deadEnds2 = (double)deadEnds/(xDimension*yDimension);
+                this.deadEnds = (int)(deadEnds2 * 100);
+
+
                 return true;
             }
 
@@ -312,28 +335,137 @@ abstract class Maze {
                     }
                 }
 
-                    // add the top neighbour
-                    if (mazeData[cur].getWallAbove() == 0){
-                        if (!exploredCells[cur - xDimension]){
-                            nextToVisit.add(cur - xDimension);
-                            parentCells[cur - xDimension] = cur;
-                        }
+                // add the top neighbour
+                if (mazeData[cur].getWallAbove() == 0){
+                    if (!exploredCells[cur - xDimension]){
+                        nextToVisit.add(cur - xDimension);
+                        parentCells[cur - xDimension] = cur;
                     }
+                }
 
-                    // add the left neighbour
-                    if (mazeData[cur].getWallLeft() == 0){
-                        System.out.println("Wall left is free " + cur);
-                        if (!exploredCells[cur - 1]){
-                            nextToVisit.add(cur - 1);
-                            parentCells[cur - 1] = cur;
-                        }
+                // add the left neighbour
+                if (mazeData[cur].getWallLeft() == 0){
+                    System.out.println("Wall left is free " + cur);
+                    if (!exploredCells[cur - 1]){
+                        nextToVisit.add(cur - 1);
+                        parentCells[cur - 1] = cur;
                     }
+                }
             }
 
         }
         return false;
     }
 
+    public void PublishMaze() throws IOException {
 
+        GenerateDisplayData();
+        UI.getInstance().display.SetDisplayedMaze(this);
+
+        // Set the width and height
+        // divide by 4.
+        int width = 2000;
+        int height = 2000;
+        /**
+         if (xDimension < 30){
+         width = 64 * xDimension;
+         } else if (xDimension < 50){
+         width = 40 * xDimension;
+         } else if (xDimension < 80){
+         width = 16 * xDimension;
+         }
+         if (yDimension < 30){
+         height = 64 * yDimension;
+         } else if (yDimension < 50){
+         height = 40 * yDimension;
+         } else if (yDimension < 80){
+         height = 16*yDimension;
+         }*/
+
+        // create a new JPanel and populate with displayData
+        JPanel imageCanvas = new JPanel();
+        imageCanvas.setLayout(new GridLayout(yDimension,xDimension));
+        imageCanvas.setPreferredSize(new Dimension(width,height));
+        imageCanvas.setBackground(Color.GRAY);
+        imageCanvas.setBackground(Color.WHITE);
+        for (int i = 0; i < this.xDimension*this.yDimension; i++){;
+            imageCanvas.add(displayData[i]);
+        }
+
+        // create a frame to check
+        JFrame frame = new JFrame();
+        frame.add(imageCanvas);
+        frame.setVisible(false);
+        frame.pack();
+
+        // save that JPanel
+        BufferedImage image = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2 = image.createGraphics();
+        imageCanvas.paint(g2);
+        try{
+            ImageIO.write(image,"jpeg",new File(this.name+".jpeg"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Private helper method for ReplaceCell to make sure a top border is not altered
+     * @param cellIndex index of the maze
+     * @return true if the cell index is a top border cell
+     */
+    private boolean CheckTopBorder(int cellIndex){
+        if (cellIndex < this.xDimension){
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Private helper method for ReplaceCell to make sure a bottom border is not altered
+     * @param cellIndex index of the maze
+     * @return true if the cell index is a bottom border cell
+     */
+    private boolean CheckBottomBorder(int cellIndex){
+        if (cellIndex >= this.xDimension * (this.yDimension - 1)){
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Private helper method for ReplaceCell to make sure a left border is not altered
+     * @param cellIndex index of the maze
+     * @return true if the cell index is a left border cell
+     */
+    private boolean CheckLeftBorder(int cellIndex){
+        if (cellIndex%this.xDimension == 0){
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Private helper method for ReplaceCell to make sure a right border is not altered
+     * @param cellIndex index of the maze
+     * @return true if the cell index is a right border cell
+     */
+    private boolean CheckRightBorder(int cellIndex){
+        if (cellIndex%this.xDimension == this.xDimension - 1){
+            return true;
+        } else if (cellIndex + 1 == this.cellCount){
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Private helper method for GenerateAutoMaze to generate random int for direction
+     * @param max the maximum int to be returned
+     * @return random int between 0 and the max value
+     */
+    protected int GetRandomInt(int max){
+        return (int)(Math.random()*max);
+    }
 
 }

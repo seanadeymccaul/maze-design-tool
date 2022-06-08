@@ -1,0 +1,239 @@
+<html>
+<head>
+<title>UIFormLoader.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #808080;}
+.s3 { color: #6a8759;}
+.s4 { color: #6897bb;}
+.s5 { color: #629755; font-style: italic;}
+.s6 { color: #77b767; font-style: italic;}
+.s7 { color: #629755; font-weight: bold; font-style: italic;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+UIFormLoader.java</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">javax.swing.*</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.awt.*</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.awt.event.ActionEvent</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.awt.event.ActionListener</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.io.IOException</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.sql.SQLException</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.util.ArrayList</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.util.Arrays</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.util.Collections</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.util.Comparator</span><span class="s0">;</span>
+
+<span class="s0">public class </span><span class="s1">UIFormLoader </span><span class="s0">extends </span><span class="s1">JFrame {</span>
+
+    <span class="s0">private </span><span class="s1">Maze maze</span><span class="s0">;</span>
+    <span class="s0">private </span><span class="s1">JComboBox&lt;String&gt; sortByBox</span><span class="s0">;</span>
+    <span class="s0">private </span><span class="s1">JComboBox&lt;String&gt; mazeNameBox</span><span class="s0">;</span>
+
+    <span class="s0">public </span><span class="s1">UIFormLoader() </span><span class="s0">throws </span><span class="s1">SQLException</span><span class="s0">, </span><span class="s1">IOException {</span>
+
+        <span class="s2">// Set up the main JFrame</span>
+        <span class="s0">new </span><span class="s1">JFrame(</span><span class="s3">&quot;Maze Importer&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">setPreferredSize(</span><span class="s0">new </span><span class="s1">Dimension(</span><span class="s4">800</span><span class="s0">, </span><span class="s4">300</span><span class="s1">))</span><span class="s0">;</span>
+        <span class="s1">setLayout(</span><span class="s0">new </span><span class="s1">BorderLayout(</span><span class="s4">10</span><span class="s0">, </span><span class="s4">30</span><span class="s1">))</span><span class="s0">;</span>
+        <span class="s1">setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE)</span><span class="s0">;</span>
+        <span class="s1">setVisible(</span><span class="s0">true</span><span class="s1">)</span><span class="s0">;</span>
+
+        <span class="s2">//</span>
+        <span class="s1">JPanel titlePanel = </span><span class="s0">new </span><span class="s1">JPanel()</span><span class="s0">;</span>
+        <span class="s1">titlePanel.add(</span><span class="s0">new </span><span class="s1">JLabel(</span><span class="s3">&quot;Maze Loader&quot;</span><span class="s1">)</span><span class="s0">, </span><span class="s1">SwingConstants.CENTER)</span><span class="s0">;</span>
+        <span class="s1">add(titlePanel</span><span class="s0">, </span><span class="s1">BorderLayout.NORTH)</span><span class="s0">;</span>
+
+        <span class="s2">// use the GetStringColumn and then sort them all</span>
+
+
+        <span class="s2">// Sort maze by</span>
+        <span class="s1">JPanel sortOptionsPanel = </span><span class="s0">new </span><span class="s1">JPanel(</span><span class="s0">new </span><span class="s1">GridLayout(</span><span class="s4">4</span><span class="s0">, </span><span class="s4">1</span><span class="s1">))</span><span class="s0">;</span>
+        <span class="s1">sortOptionsPanel.add(</span><span class="s0">new </span><span class="s1">JLabel(</span><span class="s3">&quot;Sort Mazes By: &quot;</span><span class="s1">))</span><span class="s0">;</span>
+        <span class="s1">String[] sortOptions = </span><span class="s0">new </span><span class="s1">String[]{</span><span class="s3">&quot;Maze Name&quot;</span><span class="s0">, </span><span class="s3">&quot;Author Name&quot;</span><span class="s0">, </span><span class="s3">&quot;Creation Time&quot;</span><span class="s0">, </span><span class="s3">&quot;Last Edit Time&quot;</span><span class="s1">}</span><span class="s0">;</span>
+        <span class="s0">this</span><span class="s1">.sortByBox = </span><span class="s0">new </span><span class="s1">JComboBox&lt;&gt;(sortOptions)</span><span class="s0">;</span>
+        <span class="s1">sortOptionsPanel.add(</span><span class="s0">this</span><span class="s1">.sortByBox)</span><span class="s0">;</span>
+
+        <span class="s2">// The mazes selection</span>
+        <span class="s1">sortOptionsPanel.add(</span><span class="s0">new </span><span class="s1">JLabel(</span><span class="s3">&quot;Select a Maze to load: &quot;</span><span class="s1">))</span><span class="s0">;</span>
+
+        <span class="s2">// Get the mazes from the database</span>
+        <span class="s1">String[] mazeNames = MazeDatabase_new.getInstance().GetTableNames()</span><span class="s0">;</span>
+        <span class="s1">ArrayList&lt;Maze&gt; mazeList = </span><span class="s0">new </span><span class="s1">ArrayList&lt;&gt;()</span><span class="s0">;</span>
+        <span class="s0">for </span><span class="s1">(</span><span class="s0">int </span><span class="s1">i = </span><span class="s4">0</span><span class="s0">; </span><span class="s1">i &lt; mazeNames.length</span><span class="s0">; </span><span class="s1">i++) {</span>
+            <span class="s1">mazeList.add(MazeDatabase_new.getInstance().LoadTable(mazeNames[i]))</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+        <span class="s2">// Sort by name, author, creation date, last edit date</span>
+        <span class="s0">if </span><span class="s1">(mazeList.size() &gt; </span><span class="s4">0</span><span class="s1">) {</span>
+            <span class="s1">Collections.sort(mazeList</span><span class="s0">, new </span><span class="s1">Comparator&lt;Maze&gt;() {</span>
+                <span class="s1">@Override</span>
+                <span class="s0">public int </span><span class="s1">compare(Maze o1</span><span class="s0">, </span><span class="s1">Maze o2) {</span>
+                    <span class="s2">// Do the if statement for teh selection here</span>
+                    <span class="s0">if </span><span class="s1">(sortByBox.getSelectedIndex() == </span><span class="s4">0</span><span class="s1">){</span>
+                        <span class="s0">return </span><span class="s1">o1.GetName().compareTo(o2.GetName())</span><span class="s0">;</span>
+                    <span class="s1">} </span><span class="s0">else if </span><span class="s1">(sortByBox.getSelectedIndex() == </span><span class="s4">1</span><span class="s1">){</span>
+                        <span class="s0">return </span><span class="s1">o1.GetAuthor().compareTo(o2.GetAuthor())</span><span class="s0">;</span>
+                    <span class="s1">} </span><span class="s0">else if </span><span class="s1">(sortByBox.getSelectedIndex() == </span><span class="s4">2</span><span class="s1">){</span>
+                        <span class="s0">return </span><span class="s1">o1.GetCreationTime().compareTo(o2.GetCreationTime())</span><span class="s0">;</span>
+                    <span class="s1">} </span><span class="s0">else if </span><span class="s1">(sortByBox.getSelectedIndex() == </span><span class="s4">3</span><span class="s1">){</span>
+                        <span class="s0">return </span><span class="s1">o1.GetLastEditTime().compareTo(o2.GetLastEditTime())</span><span class="s0">;</span>
+                    <span class="s1">}</span>
+                    <span class="s0">return </span><span class="s4">0</span><span class="s0">;</span>
+                <span class="s1">}</span><span class="s0">;</span>
+            <span class="s1">})</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+        <span class="s1">String[] mazeDetails = </span><span class="s0">new </span><span class="s1">String[mazeNames.length]</span><span class="s0">;</span>
+        <span class="s0">int </span><span class="s1">i = </span><span class="s4">0</span><span class="s0">;</span>
+        <span class="s0">for </span><span class="s1">(Maze maze : mazeList){</span>
+            <span class="s1">mazeDetails[i] = </span><span class="s3">&quot;[Name] - &quot; </span><span class="s1">+ maze.GetName() + </span><span class="s3">&quot; [Author] - &quot; </span><span class="s1">+ maze.GetAuthor() + </span><span class="s3">&quot; [CreationDate] - &quot; </span><span class="s1">+</span>
+                    <span class="s1">maze.GetLastEditTime() + </span><span class="s3">&quot; [LastEditDate] - &quot; </span><span class="s1">+ maze.GetLastEditTime()</span><span class="s0">;</span>
+            <span class="s1">i++</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+        <span class="s1">mazeNameBox = </span><span class="s0">new </span><span class="s1">JComboBox&lt;&gt;(mazeDetails)</span><span class="s0">;</span>
+
+        <span class="s1">sortOptionsPanel.add(mazeNameBox)</span><span class="s0">;</span>
+
+        <span class="s1">add(sortOptionsPanel)</span><span class="s0">;</span>
+        <span class="s2">//</span>
+        <span class="s1">JButton button = </span><span class="s0">new </span><span class="s1">JButton(</span><span class="s3">&quot;Select&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">add(button</span><span class="s0">,</span><span class="s1">BorderLayout.SOUTH)</span><span class="s0">;</span>
+
+        <span class="s1">sortByBox.addActionListener(</span><span class="s0">new </span><span class="s1">ActionListener() {</span>
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">actionPerformed(ActionEvent e) {</span>
+                <span class="s1">mazeNameBox.removeAllItems()</span><span class="s0">;</span>
+                <span class="s0">if </span><span class="s1">(mazeList.size() &gt; </span><span class="s4">0</span><span class="s1">) {</span>
+                    <span class="s1">Collections.sort(mazeList</span><span class="s0">, new </span><span class="s1">Comparator&lt;Maze&gt;() {</span>
+                        <span class="s1">@Override</span>
+                        <span class="s0">public int </span><span class="s1">compare(Maze o1</span><span class="s0">, </span><span class="s1">Maze o2) {</span>
+                            <span class="s2">// Do the if statement for teh selection here</span>
+                            <span class="s0">if </span><span class="s1">(sortByBox.getSelectedIndex() == </span><span class="s4">0</span><span class="s1">){</span>
+                                <span class="s0">return </span><span class="s1">o1.GetName().compareTo(o2.GetName())</span><span class="s0">;</span>
+                            <span class="s1">} </span><span class="s0">else if </span><span class="s1">(sortByBox.getSelectedIndex() == </span><span class="s4">1</span><span class="s1">){</span>
+                                <span class="s0">return </span><span class="s1">o1.GetAuthor().compareTo(o2.GetAuthor())</span><span class="s0">;</span>
+                            <span class="s1">} </span><span class="s0">else if </span><span class="s1">(sortByBox.getSelectedIndex() == </span><span class="s4">2</span><span class="s1">){</span>
+                                <span class="s0">return </span><span class="s1">o1.GetCreationTime().compareTo(o2.GetCreationTime())</span><span class="s0">;</span>
+                            <span class="s1">} </span><span class="s0">else if </span><span class="s1">(sortByBox.getSelectedIndex() == </span><span class="s4">3</span><span class="s1">){</span>
+                                <span class="s0">return </span><span class="s1">o1.GetLastEditTime().compareTo(o2.GetLastEditTime())</span><span class="s0">;</span>
+                            <span class="s1">}</span>
+                            <span class="s0">return </span><span class="s4">0</span><span class="s0">;</span>
+                        <span class="s1">}</span><span class="s0">;</span>
+                    <span class="s1">})</span><span class="s0">;</span>
+                <span class="s1">}</span>
+                <span class="s1">String[] mazeDetails = </span><span class="s0">new </span><span class="s1">String[mazeNames.length]</span><span class="s0">;</span>
+                <span class="s0">int </span><span class="s1">i = </span><span class="s4">0</span><span class="s0">;</span>
+                <span class="s0">for </span><span class="s1">(Maze maze : mazeList){</span>
+                    <span class="s1">System.out.println(</span><span class="s3">&quot;Added a maze &quot; </span><span class="s1">+ maze.GetName())</span><span class="s0">;</span>
+                    <span class="s1">mazeDetails[i] = </span><span class="s3">&quot;[Name] - &quot; </span><span class="s1">+ maze.GetName() + </span><span class="s3">&quot; [Author] - &quot; </span><span class="s1">+ maze.GetAuthor() + </span><span class="s3">&quot; [CreationDate] - &quot; </span><span class="s1">+</span>
+                            <span class="s1">maze.GetLastEditTime() + </span><span class="s3">&quot; [LastEditDate] - &quot; </span><span class="s1">+ maze.GetLastEditTime()</span><span class="s0">;</span>
+                    <span class="s1">System.out.println(mazeDetails[i])</span><span class="s0">;</span>
+                    <span class="s1">i++</span><span class="s0">;</span>
+                <span class="s1">}</span>
+                <span class="s0">for </span><span class="s1">(</span><span class="s0">int </span><span class="s1">j = </span><span class="s4">0</span><span class="s0">; </span><span class="s1">j &lt; mazeDetails.length</span><span class="s0">;</span><span class="s1">j++){</span>
+                    <span class="s1">mazeNameBox.addItem(mazeDetails[j])</span><span class="s0">;</span>
+                <span class="s1">}</span>
+
+            <span class="s1">}})</span><span class="s0">;</span>
+
+        <span class="s1">button.addActionListener(</span><span class="s0">new </span><span class="s1">ActionListener() {</span>
+                                     <span class="s1">@Override</span>
+                                     <span class="s0">public void </span><span class="s1">actionPerformed(ActionEvent e) {</span>
+
+                                         <span class="s2">// Check if the selected maze is adult or child and load it respectively</span>
+                                         <span class="s0">try </span><span class="s1">{</span>
+
+                                             <span class="s1">String[] mazeNames = MazeDatabase_new.getInstance().GetTableNames()</span><span class="s0">;</span>
+                                             <span class="s1">String selectedMaze = mazeNames[mazeNameBox.getSelectedIndex()]</span><span class="s0">;</span>
+
+                                             <span class="s1">maze = MazeDatabase_new.getInstance().LoadTable(selectedMaze)</span><span class="s0">;</span>
+
+                                             <span class="s1">UI.getInstance().display.SetDisplayedMaze(maze)</span><span class="s0">;</span>
+
+                                         <span class="s1">} </span><span class="s0">catch </span><span class="s1">(SQLException | IOException ex) {</span>
+                                             <span class="s1">ex.printStackTrace()</span><span class="s0">;</span>
+                                         <span class="s1">}</span>
+                                        <span class="s1">dispose()</span><span class="s0">;</span>
+                                     <span class="s1">}</span>
+                                 <span class="s1">})</span><span class="s0">;</span>
+
+
+        <span class="s1">pack()</span><span class="s0">;</span>
+
+
+
+
+
+
+
+
+        <span class="s5">/**</span>
+        <span class="s5">// Add a scrollbar for display of maze options</span>
+        <span class="s5">String[] mazeNames = MazeDatabase_new.getInstance().GetTableNames();</span>
+        <span class="s5">JPanel mazeOptions = new JPanel();</span>
+        <span class="s5">mazeOptions.setPreferredSize(new Dimension(500, 1000));</span>
+        <span class="s5">mazeOptions.setLayout(new GridLayout(mazeNames.length + 2, 3));</span>
+        <span class="s5">mazeOptions.add(new JLabel(&quot;MAZE NAME&quot;)); mazeOptions.add(new JLabel(&quot;AUTHOR NAME&quot;));</span>
+        <span class="s5">mazeOptions.add(new JLabel(&quot;CREATION TIME&quot;));</span>
+        <span class="s5">for (int i = 0; i &lt; mazeNames.length; i++) {</span>
+            <span class="s5">mazeOptions.add(new JLabel(mazeNames[i]));</span>
+            <span class="s5">mazeOptions.add(new JLabel(MazeDatabase_new.getInstance().GetString(mazeNames[i],&quot;mazeAuthor&quot;)));</span>
+            <span class="s5">mazeOptions.add(new JLabel(MazeDatabase_new.getInstance().GetString(mazeNames[i],&quot;lastEditTime&quot;)));</span>
+        <span class="s5">}</span>
+
+        <span class="s5">JScrollPane scrollPane = new JScrollPane(mazeOptions);</span>
+        <span class="s5">scrollPane.setAutoscrolls(true);</span>
+        <span class="s5">scrollPane.getVerticalScrollBar().setUnitIncrement(25);</span>
+        <span class="s5">scrollPane.getHorizontalScrollBar().setUnitIncrement(25);</span>
+        <span class="s5">scrollPane.setPreferredSize(new Dimension(500,500));</span>
+        <span class="s5">scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);</span>
+        <span class="s5">add(scrollPane, BorderLayout.CENTER);</span>
+
+        <span class="s5">// Add a combo box and button to select a maze name</span>
+        <span class="s5">JPanel settingsPanel = new JPanel(new GridLayout(2, 2, 20, 30));</span>
+        <span class="s5">settingsPanel.add(new JLabel(&quot;Sort mazes by: &quot;));</span>
+        <span class="s5">settingsPanel.add(new JLabel(&quot;Select a maze to load&quot;));</span>
+        <span class="s5">JComboBox</span><span class="s6">&lt;String&gt; </span><span class="s5">mazeNameBox = new JComboBox&lt;&gt;(MazeDatabase_new.getInstance().GetTableNames());</span>
+        <span class="s5">settingsPanel.add(mazeNameBox);</span>
+        <span class="s5">JButton button = new JButton(&quot;Select&quot;);</span>
+        <span class="s5">add(button, BorderLayout.SOUTH);</span>
+        <span class="s5">add(settingsPanel, BorderLayout.NORTH);</span>
+        <span class="s5">pack();</span>
+
+        <span class="s5">// MazeName - AuthorName - Created - Last Edited -</span>
+
+        <span class="s5">// Add button listener event for actions</span>
+        <span class="s5">button.addActionListener(new ActionListener() {</span>
+            <span class="s7">@Override</span>
+            <span class="s5">public void actionPerformed(ActionEvent e) {</span>
+
+                <span class="s5">// Check if the selected maze is adult or child and load it respectively</span>
+                <span class="s5">try {</span>
+
+                    <span class="s5">String[] mazeNames = MazeDatabase_new.getInstance().GetTableNames();</span>
+                    <span class="s5">String selectedMaze = mazeNames[mazeNameBox.getSelectedIndex()];</span>
+
+                    <span class="s5">maze = MazeDatabase_new.getInstance().LoadTable(selectedMaze);</span>
+
+                    <span class="s5">UI.getInstance().display.SetDisplayedMaze(maze);</span>
+
+                <span class="s5">} catch (SQLException | IOException ex) {</span>
+                    <span class="s5">ex.printStackTrace();</span>
+                <span class="s5">}</span>
+
+            <span class="s5">}</span>
+        <span class="s5">});*/</span>
+
+    <span class="s1">}</span>
+
+<span class="s1">}</span></pre>
+</body>
+</html>

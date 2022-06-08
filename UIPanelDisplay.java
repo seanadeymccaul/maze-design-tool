@@ -32,7 +32,8 @@ public class UIPanelDisplay extends JPanel {
 
         // Populate the display with the updated display cells
         for (int i = 0; i < xDimension*yDimension; i++){
-            add(displayedMaze.GetDisplayData()[i]);
+            UIPanelDisplayCell currentCell = displayedMaze.GetDisplayData()[i];
+            add(currentCell);
         }
 
         // Pack the UI

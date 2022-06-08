@@ -38,7 +38,7 @@ public class MazeDatabase_new {
 
         // Create the table
         String sql = "CREATE TABLE " + maze.GetName() + " (id int NOT NULL AUTO_INCREMENT, mazeData VARCHAR(5), " +
-                "imagePath VARCHAR(64), imageIndex INT, imageHeight INT, imageWidth INT, mazeAuthor VARCHAR(64), " +
+                "imagePath VARCHAR(64), imageIndex INT, imageHeight INT, creationTime VARCHAR(64), imageWidth INT, mazeAuthor VARCHAR(64), " +
                 "mazeType VARCHAR(64), xDimension INT, yDimension INT, lastEditTime " + "VARCHAR(64), PRIMARY KEY (id));";
         PreparedStatement statement = connection.prepareStatement(sql);
         statement.execute();
@@ -54,8 +54,10 @@ public class MazeDatabase_new {
         // Insert maze information
         sql = "UPDATE " + maze.GetName() + " SET mazeType = '" + mazeType + "', xDimension = " + maze.GetXDimension() +
                 ", yDimension = " + maze.GetYDimension() + ", mazeAuthor = '" + maze.GetAuthor() + "', lastEditTime = '" +
+                new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new java.util.Date()) + "', creationTime = '" +
                 new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new java.util.Date()) + "' WHERE id = 1;";
         statement = connection.prepareStatement(sql);
+        System.out.println(sql);
         statement.execute();
 
         // Insert the image data
@@ -73,6 +75,7 @@ public class MazeDatabase_new {
 
         // Update the maze data
         SetStringColumn(maze.GetName(),"mazeData", CellArrayToStringArray(maze.GetMazeData()));
+        SetString(maze.GetName(),"lastEditTime",maze.GetLastEditTime(),1);
 
         // Update the image data
         int i = 0;
@@ -107,6 +110,7 @@ public class MazeDatabase_new {
             maze.SetXDimension(GetInt(tableName,"xDimension"));
             maze.SetYDimension(GetInt(tableName,"yDimension"));
             maze.SetLastEditTime(GetString(tableName,"lastEditTime"));
+            maze.SetCreationTime(GetString(tableName,"creationTime"));
 
             // Set image information
             String[] imagePaths = GetStringColumn(tableName,"imagePath");

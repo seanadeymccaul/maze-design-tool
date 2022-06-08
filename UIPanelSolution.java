@@ -27,7 +27,7 @@ public class UIPanelSolution extends JPanel{
 
         // Dimension options
         JPanel solutionMetricsPanel = new JPanel(); solutionMetricsPanel.setLayout(new GridLayout(1,2));
-        JLabel reached = new JLabel("Cells reached: " + cellsReached + "%"); JLabel deadEnds = new JLabel("Dead ends: " +
+        JLabel reached = new JLabel("Reached: " + cellsReached + "%"); JLabel deadEnds = new JLabel("Dead ends: " +
                 this.deadEnds + "%"); solutionMetricsPanel.add(reached); solutionMetricsPanel.add(deadEnds);
         add(solutionMetricsPanel,BorderLayout.CENTER);
 
@@ -50,7 +50,9 @@ public class UIPanelSolution extends JPanel{
 
                     c.setText("SOLUTION AVAILABLE");
                     d.setBackground(Color.GREEN);
-
+                    cellsReached = UI.getInstance().display.GetDisplayedMaze().cellsReached;
+                    reached.setText("Reached: " + cellsReached + "%");
+                    deadEnds.setText("Dead: " + UI.getInstance().display.GetDisplayedMaze().deadEnds + "%");
 
                 } else {
 
@@ -70,7 +72,12 @@ public class UIPanelSolution extends JPanel{
 
                 if (UI.getInstance().display.GetDisplayedMaze().Solve()){
 
-                    UI.getInstance().display.GetDisplayedMaze().paintSolution = true;
+                    if (UI.getInstance().display.GetDisplayedMaze().paintSolution){
+                        UI.getInstance().display.GetDisplayedMaze().paintSolution = false;
+                    } else {
+                        UI.getInstance().display.GetDisplayedMaze().paintSolution = true;
+                    }
+
                     try {
                         UI.getInstance().display.UpdateDisplay();
                     } catch (IOException ex) {

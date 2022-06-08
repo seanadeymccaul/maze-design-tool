@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Objects;
 
 public class UIFormCreator extends JFrame {
 
@@ -96,6 +97,9 @@ public class UIFormCreator extends JFrame {
 
                 String mazeName = nameField.getText();
                 String authorName = authorField.getText();
+                if (Objects.equals(authorName, "")){
+                    authorName = "Anonymous";
+                }
                 int xDimension = (Integer)xDimensionSelection.getValue();
                 int yDimension = (Integer)yDimensionSelection.getValue();
 
@@ -139,7 +143,7 @@ public class UIFormCreator extends JFrame {
                     }
                 }
 
-
+            dispose();
             }
         });
 

@@ -4,15 +4,31 @@ import java.sql.SQLException;
 
 public class MazeAdult extends Maze{
 
-    // Constructor
-    public MazeAdult() throws SQLException {
+    /**
+     * Default constructor
+     * @throws SQLException
+     */
+    public MazeAdult() {
         super();
     }
 
-    public MazeAdult(String name,String author, int xDimension, int yDimension) throws SQLException, IOException {
+    /**
+     * Constructor for creating a new maze
+     * @param name the name to save the maze as
+     * @param author the name of the author
+     * @param xDimension the cell count of the maze width
+     * @param yDimension the cell count of the maze height
+     * @throws SQLException creates a new table and populates with data in mariadb
+     */
+    public MazeAdult(String name,String author, int xDimension, int yDimension) throws SQLException {
         super(name, author, xDimension, yDimension);
     }
 
+    /**
+     *
+     * @throws IOException
+     * @throws SQLException
+     */
     @Override
     public void GenerateBlankMaze() throws IOException, SQLException {
 
@@ -30,6 +46,11 @@ public class MazeAdult extends Maze{
 
         }
 
+    /**
+     *
+     * @throws IOException
+     * @throws SQLException
+     */
     @Override
     public void GenerateAutoMaze() throws IOException, SQLException {
 
@@ -50,6 +71,10 @@ public class MazeAdult extends Maze{
 
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     private void InitialiseStartEndCells() throws IOException {
 
         ReplaceCell(new MazeCell(2,0,0,0,0),0);
@@ -57,6 +82,10 @@ public class MazeAdult extends Maze{
 
     }
 
+    /**
+     * 
+     * @throws IOException
+     */
     @Override
     public void GenerateDisplayData() throws IOException {
 
@@ -67,9 +96,11 @@ public class MazeAdult extends Maze{
         for (int i = 0; i < (xDimension*yDimension); i++){
             if (mazeData[i].getValue() < 6){
                 UIPanelDisplayCell newPanel = new UIPanelDisplayCell(this.mazeData[i],i);
-                if (solutionDirections.size() > 1){
-                    if (solutionDirections.contains(i)){
-                        newPanel.setBackground(Color.GREEN);
+                if (this.paintSolution) {
+                    if (solutionDirections.size() > 1) {
+                        if (solutionDirections.contains(i)) {
+                            newPanel.setBackground(Color.GREEN);
+                        }
                     }
                 }
 

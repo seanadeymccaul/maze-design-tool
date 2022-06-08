@@ -1,0 +1,270 @@
+<html>
+<head>
+<title>MazeDatabase_new.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #808080;}
+.s3 { color: #6a8759;}
+.s4 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+MazeDatabase_new.java</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">java.io.IOException</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.sql.*</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.text.SimpleDateFormat</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.util.ArrayList</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.util.Arrays</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.util.List</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.util.Objects</span><span class="s0">;</span>
+
+<span class="s0">public class </span><span class="s1">MazeDatabase_new {</span>
+
+    <span class="s0">private </span><span class="s1">Connection connection</span><span class="s0">;</span>
+
+    <span class="s0">protected </span><span class="s1">MazeDatabase_new(){</span>
+
+        <span class="s2">// Connect to the database</span>
+        <span class="s0">try</span><span class="s1">{</span>
+            <span class="s0">this</span><span class="s1">.connection = DriverManager.getConnection(</span><span class="s3">&quot;jdbc:mariadb://localhost:3306/MazeDatabase&quot;</span><span class="s0">,</span><span class="s3">&quot;root&quot;</span><span class="s0">,</span><span class="s3">&quot;&quot;</span><span class="s1">)</span><span class="s0">;</span>
+            <span class="s1">Statement statement = </span><span class="s0">this</span><span class="s1">.connection.createStatement()</span><span class="s0">;</span>
+            <span class="s1">statement.execute(</span><span class="s3">&quot;USE MazeDatabase;&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">} </span><span class="s0">catch </span><span class="s1">(SQLException sql){</span>
+            <span class="s1">System.err.println(sql)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+    <span class="s1">}</span>
+
+    <span class="s0">private static class </span><span class="s1">DatabaseHolder {</span>
+        <span class="s0">private final static </span><span class="s1">MazeDatabase_new INSTANCE</span><span class="s0">;</span>
+        <span class="s0">static </span><span class="s1">{</span>
+            <span class="s1">INSTANCE = </span><span class="s0">new </span><span class="s1">MazeDatabase_new()</span><span class="s0">;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public static </span><span class="s1">MazeDatabase_new getInstance(){</span>
+        <span class="s0">return </span><span class="s1">DatabaseHolder.INSTANCE</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public void </span><span class="s1">CreateTable(Maze maze</span><span class="s0">, </span><span class="s1">String mazeType) </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+
+        <span class="s2">// Create the table</span>
+        <span class="s1">String sql = </span><span class="s3">&quot;CREATE TABLE &quot; </span><span class="s1">+ maze.GetName() + </span><span class="s3">&quot; (id int NOT NULL AUTO_INCREMENT, mazeData VARCHAR(5), &quot; </span><span class="s1">+</span>
+                <span class="s3">&quot;imagePath VARCHAR(64), imageIndex INT, imageHeight INT, creationTime VARCHAR(64), imageWidth INT, mazeAuthor VARCHAR(64), &quot; </span><span class="s1">+</span>
+                <span class="s3">&quot;mazeType VARCHAR(64), xDimension INT, yDimension INT, lastEditTime &quot; </span><span class="s1">+ </span><span class="s3">&quot;VARCHAR(64), PRIMARY KEY (id));&quot;</span><span class="s0">;</span>
+        <span class="s1">PreparedStatement statement = connection.prepareStatement(sql)</span><span class="s0">;</span>
+        <span class="s1">statement.execute()</span><span class="s0">;</span>
+
+        <span class="s2">// Set the mazeData</span>
+        <span class="s0">for </span><span class="s1">(</span><span class="s0">int </span><span class="s1">i = </span><span class="s4">0</span><span class="s0">; </span><span class="s1">i &lt; maze.GetMazeData().length</span><span class="s0">; </span><span class="s1">i++){</span>
+            <span class="s1">sql = </span><span class="s3">&quot;INSERT INTO &quot; </span><span class="s1">+ maze.GetName() + </span><span class="s3">&quot; (mazeData) VALUES (&quot; </span><span class="s1">+</span>
+                    <span class="s1">CellArrayToStringArray(maze.GetMazeData())[i] + </span><span class="s3">&quot;);&quot;</span><span class="s0">;</span>
+            <span class="s1">statement = connection.prepareStatement(sql)</span><span class="s0">;</span>
+            <span class="s1">statement.execute()</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+        <span class="s2">// Insert maze information</span>
+        <span class="s1">sql = </span><span class="s3">&quot;UPDATE &quot; </span><span class="s1">+ maze.GetName() + </span><span class="s3">&quot; SET mazeType = '&quot; </span><span class="s1">+ mazeType + </span><span class="s3">&quot;', xDimension = &quot; </span><span class="s1">+ maze.GetXDimension() +</span>
+                <span class="s3">&quot;, yDimension = &quot; </span><span class="s1">+ maze.GetYDimension() + </span><span class="s3">&quot;, mazeAuthor = '&quot; </span><span class="s1">+ maze.GetAuthor() + </span><span class="s3">&quot;', lastEditTime = '&quot; </span><span class="s1">+</span>
+                <span class="s0">new </span><span class="s1">SimpleDateFormat(</span><span class="s3">&quot;yyyy.MM.dd.HH.mm.ss&quot;</span><span class="s1">).format(</span><span class="s0">new </span><span class="s1">java.util.Date()) + </span><span class="s3">&quot;', creationTime = '&quot; </span><span class="s1">+</span>
+                <span class="s0">new </span><span class="s1">SimpleDateFormat(</span><span class="s3">&quot;yyyy.MM.dd.HH.mm.ss&quot;</span><span class="s1">).format(</span><span class="s0">new </span><span class="s1">java.util.Date()) + </span><span class="s3">&quot;' WHERE id = 1;&quot;</span><span class="s0">;</span>
+        <span class="s1">statement = connection.prepareStatement(sql)</span><span class="s0">;</span>
+        <span class="s1">System.out.println(sql)</span><span class="s0">;</span>
+        <span class="s1">statement.execute()</span><span class="s0">;</span>
+
+        <span class="s2">// Insert the image data</span>
+        <span class="s0">int </span><span class="s1">i = </span><span class="s4">0</span><span class="s0">;</span>
+        <span class="s0">for </span><span class="s1">(MazeImage mazeImage : maze.GetImageList()){</span>
+            <span class="s1">SetString(maze.GetName()</span><span class="s0">,</span><span class="s3">&quot;imagePath&quot;</span><span class="s0">,</span><span class="s1">mazeImage.GetPath()</span><span class="s0">,</span><span class="s1">i+</span><span class="s4">1</span><span class="s1">)</span><span class="s0">;</span>
+            <span class="s1">SetInt(maze.GetName()</span><span class="s0">,</span><span class="s3">&quot;imageIndex&quot;</span><span class="s0">,</span><span class="s1">mazeImage.GetIndex()</span><span class="s0">,</span><span class="s1">i+</span><span class="s4">1</span><span class="s1">)</span><span class="s0">;</span>
+            <span class="s1">SetInt(maze.GetName()</span><span class="s0">,</span><span class="s3">&quot;imageHeight&quot;</span><span class="s0">,</span><span class="s1">mazeImage.GetHeight()</span><span class="s0">,</span><span class="s1">i+</span><span class="s4">1</span><span class="s1">)</span><span class="s0">;</span>
+            <span class="s1">SetInt(maze.GetName()</span><span class="s0">,</span><span class="s3">&quot;imageWidth&quot;</span><span class="s0">,</span><span class="s1">mazeImage.GetWidth()</span><span class="s0">,</span><span class="s1">i+</span><span class="s4">1</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+    <span class="s1">}</span>
+
+    <span class="s0">public void </span><span class="s1">SaveTable(Maze maze) </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+
+        <span class="s2">// Update the maze data</span>
+        <span class="s1">SetStringColumn(maze.GetName()</span><span class="s0">,</span><span class="s3">&quot;mazeData&quot;</span><span class="s0">, </span><span class="s1">CellArrayToStringArray(maze.GetMazeData()))</span><span class="s0">;</span>
+        <span class="s1">SetString(maze.GetName()</span><span class="s0">,</span><span class="s3">&quot;lastEditTime&quot;</span><span class="s0">,</span><span class="s1">maze.GetLastEditTime()</span><span class="s0">,</span><span class="s4">1</span><span class="s1">)</span><span class="s0">;</span>
+
+        <span class="s2">// Update the image data</span>
+        <span class="s0">int </span><span class="s1">i = </span><span class="s4">0</span><span class="s0">;</span>
+        <span class="s0">for </span><span class="s1">(MazeImage mazeImage : maze.GetImageList()){</span>
+            <span class="s1">SetString(maze.GetName()</span><span class="s0">,</span><span class="s3">&quot;imagePath&quot;</span><span class="s0">,</span><span class="s1">mazeImage.GetPath()</span><span class="s0">,</span><span class="s1">i+</span><span class="s4">1</span><span class="s1">)</span><span class="s0">;</span>
+            <span class="s1">SetInt(maze.GetName()</span><span class="s0">,</span><span class="s3">&quot;imageIndex&quot;</span><span class="s0">,</span><span class="s1">mazeImage.GetIndex()</span><span class="s0">,</span><span class="s1">i+</span><span class="s4">1</span><span class="s1">)</span><span class="s0">;</span>
+            <span class="s1">SetInt(maze.GetName()</span><span class="s0">,</span><span class="s3">&quot;imageHeight&quot;</span><span class="s0">,</span><span class="s1">mazeImage.GetHeight()</span><span class="s0">,</span><span class="s1">i+</span><span class="s4">1</span><span class="s1">)</span><span class="s0">;</span>
+            <span class="s1">SetInt(maze.GetName()</span><span class="s0">,</span><span class="s3">&quot;imageWidth&quot;</span><span class="s0">,</span><span class="s1">mazeImage.GetWidth()</span><span class="s0">,</span><span class="s1">i+</span><span class="s4">1</span><span class="s1">)</span><span class="s0">;</span>
+            <span class="s1">i = i + </span><span class="s4">1</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+    <span class="s1">}</span>
+
+    <span class="s0">public </span><span class="s1">Maze LoadTable(String tableName) </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+
+        <span class="s1">Maze maze = </span><span class="s0">null;</span>
+
+        <span class="s2">// Check if adult or child maze</span>
+        <span class="s0">if </span><span class="s1">(Objects.equals(GetString(tableName</span><span class="s0">, </span><span class="s3">&quot;mazeType&quot;</span><span class="s1">)</span><span class="s0">, </span><span class="s3">&quot;Adult&quot;</span><span class="s1">)){</span>
+            <span class="s1">maze = </span><span class="s0">new </span><span class="s1">MazeAdult()</span><span class="s0">;</span>
+        <span class="s1">} </span><span class="s0">else if </span><span class="s1">(Objects.equals(GetString(tableName</span><span class="s0">, </span><span class="s3">&quot;mazeType&quot;</span><span class="s1">)</span><span class="s0">,</span><span class="s3">&quot;Child&quot;</span><span class="s1">)){</span>
+            <span class="s1">maze = </span><span class="s0">new </span><span class="s1">MazeChild()</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+        <span class="s2">//</span>
+        <span class="s0">if </span><span class="s1">(maze != </span><span class="s0">null</span><span class="s1">) {</span>
+
+            <span class="s2">// Set maze information</span>
+            <span class="s1">maze.SetName(tableName)</span><span class="s0">;</span>
+            <span class="s1">maze.SetAuthor(GetString(tableName</span><span class="s0">,</span><span class="s3">&quot;mazeAuthor&quot;</span><span class="s1">))</span><span class="s0">;</span>
+            <span class="s1">maze.SetMazeData(StringArrayToCellArray(GetStringColumn(tableName</span><span class="s0">,</span><span class="s3">&quot;mazeData&quot;</span><span class="s1">)))</span><span class="s0">;</span>
+            <span class="s1">maze.SetXDimension(GetInt(tableName</span><span class="s0">,</span><span class="s3">&quot;xDimension&quot;</span><span class="s1">))</span><span class="s0">;</span>
+            <span class="s1">maze.SetYDimension(GetInt(tableName</span><span class="s0">,</span><span class="s3">&quot;yDimension&quot;</span><span class="s1">))</span><span class="s0">;</span>
+            <span class="s1">maze.SetLastEditTime(GetString(tableName</span><span class="s0">,</span><span class="s3">&quot;lastEditTime&quot;</span><span class="s1">))</span><span class="s0">;</span>
+            <span class="s1">maze.SetCreationTime(GetString(tableName</span><span class="s0">,</span><span class="s3">&quot;creationTime&quot;</span><span class="s1">))</span><span class="s0">;</span>
+
+            <span class="s2">// Set image information</span>
+            <span class="s1">String[] imagePaths = GetStringColumn(tableName</span><span class="s0">,</span><span class="s3">&quot;imagePath&quot;</span><span class="s1">)</span><span class="s0">;</span>
+            <span class="s1">Integer[] imageIndexes = GetIntegerColumn(tableName</span><span class="s0">,</span><span class="s3">&quot;imageIndex&quot;</span><span class="s1">)</span><span class="s0">;</span>
+            <span class="s1">Integer[] imageHeights = GetIntegerColumn(tableName</span><span class="s0">,</span><span class="s3">&quot;imageHeight&quot;</span><span class="s1">)</span><span class="s0">;</span>
+            <span class="s1">Integer[] imageWidths = GetIntegerColumn(tableName</span><span class="s0">,</span><span class="s3">&quot;imageWidth&quot;</span><span class="s1">)</span><span class="s0">;</span>
+            <span class="s1">ArrayList&lt;MazeImage&gt; arrayList = </span><span class="s0">new </span><span class="s1">ArrayList&lt;&gt;()</span><span class="s0">;</span>
+            <span class="s0">for </span><span class="s1">(</span><span class="s0">int </span><span class="s1">i = </span><span class="s4">0</span><span class="s0">; </span><span class="s1">i &lt; imagePaths.length</span><span class="s0">; </span><span class="s1">i++){</span>
+                <span class="s0">if </span><span class="s1">(imagePaths[i] != </span><span class="s0">null</span><span class="s1">){</span>
+                    <span class="s1">arrayList.add(</span><span class="s0">new </span><span class="s1">MazeImage(imagePaths[i]</span><span class="s0">,</span><span class="s1">imageWidths[i]</span><span class="s0">,</span><span class="s1">imageHeights[i]</span><span class="s0">,</span><span class="s1">imageIndexes[i]))</span><span class="s0">;</span>
+                <span class="s1">}</span>
+            <span class="s1">}</span>
+            <span class="s1">maze.SetImageList(arrayList)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+        <span class="s0">return </span><span class="s1">maze</span><span class="s0">;</span>
+
+    <span class="s1">}</span>
+
+
+    <span class="s0">public </span><span class="s1">String[] GetTableNames() </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+        <span class="s1">List&lt;String&gt; namesList = </span><span class="s0">new </span><span class="s1">ArrayList&lt;String&gt;()</span><span class="s0">;</span>
+        <span class="s1">PreparedStatement statement = </span><span class="s0">this</span><span class="s1">.connection.prepareStatement(</span><span class="s3">&quot;SELECT table_name FROM information_schema.&quot; </span><span class="s1">+</span>
+                <span class="s3">&quot;tables WHERE table_schema = 'MazeDatabase';&quot;</span><span class="s0">, </span><span class="s1">ResultSet.TYPE_SCROLL_INSENSITIVE</span><span class="s0">, </span><span class="s1">ResultSet.CONCUR_UPDATABLE)</span><span class="s0">;</span>
+        <span class="s1">ResultSet resultSet = statement.executeQuery()</span><span class="s0">;</span>
+        <span class="s0">while </span><span class="s1">(resultSet.next()){</span>
+            <span class="s1">namesList.add(resultSet.getString(</span><span class="s4">1</span><span class="s1">))</span><span class="s0">;</span>
+        <span class="s1">}</span>
+        <span class="s1">String[] names = namesList.toArray(</span><span class="s0">new </span><span class="s1">String[namesList.size()])</span><span class="s0">;</span>
+        <span class="s0">return </span><span class="s1">names</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+
+    <span class="s0">public </span><span class="s1">String GetString(String tableName</span><span class="s0">, </span><span class="s1">String columnName) </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+        <span class="s1">String result = </span><span class="s3">&quot;&quot;</span><span class="s0">;</span>
+        <span class="s1">String sql = </span><span class="s3">&quot;SELECT &quot; </span><span class="s1">+ columnName + </span><span class="s3">&quot; FROM &quot; </span><span class="s1">+ tableName + </span><span class="s3">&quot; WHERE id = 1&quot;</span><span class="s0">;</span>
+        <span class="s1">PreparedStatement statement = connection.prepareStatement(sql)</span><span class="s0">;</span>
+        <span class="s1">ResultSet resultSet = statement.executeQuery()</span><span class="s0">;</span>
+        <span class="s0">while </span><span class="s1">(resultSet.next()){</span>
+            <span class="s1">result = resultSet.getString(</span><span class="s4">1</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+        <span class="s0">return </span><span class="s1">result</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public int </span><span class="s1">GetInt(String tableName</span><span class="s0">, </span><span class="s1">String columnName) </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+        <span class="s0">int </span><span class="s1">result = </span><span class="s4">0</span><span class="s0">;</span>
+        <span class="s1">String sql = </span><span class="s3">&quot;SELECT &quot; </span><span class="s1">+ columnName + </span><span class="s3">&quot; FROM &quot; </span><span class="s1">+ tableName + </span><span class="s3">&quot; WHERE id = 1&quot;</span><span class="s0">;</span>
+        <span class="s1">PreparedStatement statement = connection.prepareStatement(sql)</span><span class="s0">;</span>
+        <span class="s1">ResultSet resultSet = statement.executeQuery()</span><span class="s0">;</span>
+        <span class="s0">while </span><span class="s1">(resultSet.next()){</span>
+            <span class="s1">result = resultSet.getInt(</span><span class="s4">1</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+        <span class="s0">return </span><span class="s1">result</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public void </span><span class="s1">SetString(String tableName</span><span class="s0">, </span><span class="s1">String columnName</span><span class="s0">, </span><span class="s1">String data</span><span class="s0">, int </span><span class="s1">id) </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+        <span class="s1">String sql = </span><span class="s3">&quot;UPDATE &quot; </span><span class="s1">+ tableName + </span><span class="s3">&quot; SET &quot; </span><span class="s1">+ columnName + </span><span class="s3">&quot; = '&quot; </span><span class="s1">+ data + </span><span class="s3">&quot;' WHERE id = &quot; </span><span class="s1">+ id + </span><span class="s3">&quot;;&quot;</span><span class="s0">;</span>
+
+        <span class="s1">PreparedStatement statement = connection.prepareStatement(sql)</span><span class="s0">;</span>
+        <span class="s1">statement.execute()</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public void </span><span class="s1">SetInt(String tableName</span><span class="s0">, </span><span class="s1">String columnName</span><span class="s0">, int </span><span class="s1">data</span><span class="s0">, int </span><span class="s1">id) </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+        <span class="s1">String sql = </span><span class="s3">&quot;UPDATE &quot; </span><span class="s1">+ tableName + </span><span class="s3">&quot; SET &quot; </span><span class="s1">+ columnName + </span><span class="s3">&quot; = &quot; </span><span class="s1">+ data + </span><span class="s3">&quot; WHERE id = &quot; </span><span class="s1">+ id + </span><span class="s3">&quot;;&quot;</span><span class="s0">;</span>
+        <span class="s1">PreparedStatement statement = connection.prepareStatement(sql)</span><span class="s0">;</span>
+        <span class="s1">statement.execute()</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public </span><span class="s1">String[] GetStringColumn(String tableName</span><span class="s0">, </span><span class="s1">String columnName) </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+        <span class="s1">ArrayList&lt;String&gt; arrayList = </span><span class="s0">new </span><span class="s1">ArrayList&lt;&gt;()</span><span class="s0">;</span>
+        <span class="s1">String sql = </span><span class="s3">&quot;SELECT &quot; </span><span class="s1">+ columnName + </span><span class="s3">&quot; FROM &quot; </span><span class="s1">+ tableName + </span><span class="s3">&quot;;&quot;</span><span class="s0">;</span>
+        <span class="s1">PreparedStatement statement = connection.prepareStatement(sql)</span><span class="s0">;</span>
+        <span class="s1">ResultSet resultSet = statement.executeQuery()</span><span class="s0">;</span>
+        <span class="s0">while </span><span class="s1">(resultSet.next()){</span>
+            <span class="s1">arrayList.add(resultSet.getString(</span><span class="s4">1</span><span class="s1">))</span><span class="s0">;</span>
+        <span class="s1">}</span>
+        <span class="s1">String[] data = arrayList.toArray(</span><span class="s0">new </span><span class="s1">String[arrayList.size()])</span><span class="s0">;</span>
+        <span class="s0">return </span><span class="s1">data</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public </span><span class="s1">Integer[] GetIntegerColumn(String tableName</span><span class="s0">, </span><span class="s1">String columnName) </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+        <span class="s1">ArrayList&lt;Integer&gt; arrayList = </span><span class="s0">new </span><span class="s1">ArrayList&lt;&gt;()</span><span class="s0">;</span>
+        <span class="s1">String sql = </span><span class="s3">&quot;SELECT &quot; </span><span class="s1">+ columnName + </span><span class="s3">&quot; FROM &quot; </span><span class="s1">+ tableName + </span><span class="s3">&quot;;&quot;</span><span class="s0">;</span>
+        <span class="s1">PreparedStatement statement = connection.prepareStatement(sql)</span><span class="s0">;</span>
+        <span class="s1">ResultSet resultSet = statement.executeQuery()</span><span class="s0">;</span>
+        <span class="s0">while </span><span class="s1">(resultSet.next()){</span>
+            <span class="s1">arrayList.add(resultSet.getInt(</span><span class="s4">1</span><span class="s1">))</span><span class="s0">;</span>
+        <span class="s1">}</span>
+        <span class="s1">Integer[] data = arrayList.toArray(</span><span class="s0">new </span><span class="s1">Integer[arrayList.size()])</span><span class="s0">;</span>
+        <span class="s0">return </span><span class="s1">data</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public void </span><span class="s1">SetStringColumn(String tableName</span><span class="s0">, </span><span class="s1">String columnName</span><span class="s0">, </span><span class="s1">String[] data) </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+        <span class="s0">for </span><span class="s1">(</span><span class="s0">int </span><span class="s1">i = </span><span class="s4">0</span><span class="s0">; </span><span class="s1">i &lt; data.length</span><span class="s0">; </span><span class="s1">i++){</span>
+            <span class="s1">String sql = </span><span class="s3">&quot;UPDATE &quot; </span><span class="s1">+ tableName + </span><span class="s3">&quot; SET &quot; </span><span class="s1">+ columnName + </span><span class="s3">&quot; = &quot; </span><span class="s1">+ data[i] + </span><span class="s3">&quot; WHERE id = &quot; </span><span class="s1">+ (i+</span><span class="s4">1</span><span class="s1">) + </span><span class="s3">&quot;;&quot;</span><span class="s0">;</span>
+            <span class="s1">PreparedStatement statement = connection.prepareStatement(sql)</span><span class="s0">;</span>
+            <span class="s1">statement.execute()</span><span class="s0">;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public void </span><span class="s1">SetIntColumn(String tableName</span><span class="s0">, </span><span class="s1">String columnName</span><span class="s0">, int</span><span class="s1">[] data) </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+        <span class="s0">for </span><span class="s1">(</span><span class="s0">int </span><span class="s1">i = </span><span class="s4">0</span><span class="s0">; </span><span class="s1">i &lt; data.length</span><span class="s0">; </span><span class="s1">i++){</span>
+            <span class="s1">String sql = </span><span class="s3">&quot;UPDATE &quot; </span><span class="s1">+ tableName + </span><span class="s3">&quot; SET &quot; </span><span class="s1">+ columnName + </span><span class="s3">&quot; = &quot; </span><span class="s1">+ data[i] + </span><span class="s3">&quot; WHERE id = &quot; </span><span class="s1">+ (i+</span><span class="s4">1</span><span class="s1">) + </span><span class="s3">&quot;;&quot;</span><span class="s0">;</span>
+            <span class="s1">PreparedStatement statement = connection.prepareStatement(sql)</span><span class="s0">;</span>
+            <span class="s1">statement.execute()</span><span class="s0">;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public </span><span class="s1">String[] CellArrayToStringArray(MazeCell[] cellData){</span>
+        <span class="s1">String[] mazeDataString = </span><span class="s0">new </span><span class="s1">String[cellData.length]</span><span class="s0">;</span>
+        <span class="s0">for </span><span class="s1">(</span><span class="s0">int </span><span class="s1">i = </span><span class="s4">0</span><span class="s0">; </span><span class="s1">i &lt; cellData.length</span><span class="s0">; </span><span class="s1">i++){</span>
+            <span class="s1">String value = Integer.toString(cellData[i].getValue()) + Integer.toString(cellData[i].getWallLeft()) +</span>
+                    <span class="s1">Integer.toString(cellData[i].getWallRight()) + Integer.toString(cellData[i].getWallAbove()) +</span>
+                    <span class="s1">Integer.toString(cellData[i].getWallBelow())</span><span class="s0">;</span>
+            <span class="s1">mazeDataString[i] = value</span><span class="s0">;</span>
+        <span class="s1">}</span>
+        <span class="s0">return </span><span class="s1">mazeDataString</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public </span><span class="s1">MazeCell[] StringArrayToCellArray(String[] stringData){</span>
+        <span class="s1">MazeCell[] cellData = </span><span class="s0">new </span><span class="s1">MazeCell[stringData.length]</span><span class="s0">;</span>
+        <span class="s0">for </span><span class="s1">(</span><span class="s0">int </span><span class="s1">i = </span><span class="s4">0</span><span class="s0">; </span><span class="s1">i &lt; stringData.length</span><span class="s0">; </span><span class="s1">i++){</span>
+            <span class="s1">cellData[i] = </span><span class="s0">new </span><span class="s1">MazeCell(Character.getNumericValue(stringData[i].charAt(</span><span class="s4">0</span><span class="s1">))</span><span class="s0">,</span>
+                    <span class="s1">Character.getNumericValue(stringData[i].charAt(</span><span class="s4">1</span><span class="s1">))</span><span class="s0">,</span>
+                    <span class="s1">Character.getNumericValue(stringData[i].charAt(</span><span class="s4">2</span><span class="s1">))</span><span class="s0">,</span>
+                    <span class="s1">Character.getNumericValue(stringData[i].charAt(</span><span class="s4">3</span><span class="s1">))</span><span class="s0">,</span>
+                    <span class="s1">Character.getNumericValue(stringData[i].charAt(</span><span class="s4">4</span><span class="s1">)))</span><span class="s0">;</span>
+
+        <span class="s1">}</span>
+
+        <span class="s0">return </span><span class="s1">cellData</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+
+<span class="s1">}</span>
+
+</pre>
+</body>
+</html>

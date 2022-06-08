@@ -1,5 +1,4 @@
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -54,7 +53,7 @@ public class UIPanelMenu extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    UIFormExporter newWindow = new UIFormExporter();
+                    UIFormPublisher newWindow = new UIFormPublisher();
                 } catch (SQLException ex) {
                     ex.printStackTrace();
                 }

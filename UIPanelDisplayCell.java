@@ -42,9 +42,6 @@ public class UIPanelDisplayCell extends JPanel implements MouseListener {
     }
 
 
-    public void InsertImage(JLabel picLabel) throws IOException {
-        add(picLabel);
-    }
 
     @Override
     public void mouseClicked(MouseEvent e) {

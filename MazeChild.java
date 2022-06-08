@@ -1,13 +1,14 @@
+import java.awt.*;
 import java.io.IOException;
 import java.sql.SQLException;
 
 public class MazeChild extends Maze{
 
-    public MazeChild() throws SQLException {
+    public MazeChild(){
         super();
     }
 
-    public MazeChild(String name,String author, int xDimension, int yDimension) throws SQLException, IOException {
+    public MazeChild(String name,String author, int xDimension, int yDimension) throws SQLException {
         super(name, author, xDimension, yDimension);
     }
 
@@ -68,9 +69,17 @@ public class MazeChild extends Maze{
         for (int i = 0; i < this.cellCount; i++){
             if (mazeData[i].getValue() < 6){
                 UIPanelDisplayCell newPanel = new UIPanelDisplayCell(this.mazeData[i],i);
+                if (this.paintSolution) {
+                    if (solutionDirections.size() > 1) {
+                        if (solutionDirections.contains(i)) {
+                            newPanel.setBackground(Color.GREEN);
+                        }
+                    }
+                }
                 this.displayData[i] = newPanel;
             }
         }
+
 
         //
         for (MazeImage i : imageList){

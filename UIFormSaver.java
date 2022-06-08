@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 import java.sql.SQLException;
 
 public class UIFormSaver extends JFrame {
@@ -11,39 +12,32 @@ public class UIFormSaver extends JFrame {
     public UIFormSaver() throws SQLException {
 
         new JFrame("Maze Loader");
-        setPreferredSize(new Dimension(400,400));
+        setPreferredSize(new Dimension(400,200));
         setLayout(new BorderLayout(10, 30));
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setVisible(true);
 
-        JPanel settingsPanel = new JPanel(new GridLayout(3, 1, 20, 30));
+        maze = UI.getInstance().display.GetDisplayedMaze();
+        MazeDatabase_new.getInstance().SaveTable(maze);
 
-        settingsPanel.add(new JLabel("Save maze as name:"));
+        JPanel titlePanel = new JPanel();
+        titlePanel.add(new JLabel("Maze Saver",SwingConstants.CENTER));
+        add(titlePanel,BorderLayout.NORTH);
 
-        JTextField textField = new JTextField();
+        JPanel middlePanel = new JPanel();
+        middlePanel.add(new JLabel("Maze " + UI.getInstance().display.GetDisplayedMaze().GetName() + " saved successfully!"));
+        add(middlePanel,BorderLayout.CENTER);
 
+        JButton button = new JButton("Ok");
+        add(button,BorderLayout.SOUTH);
+        pack();
 
-        settingsPanel.add(textField);
-
-        JButton button = new JButton("Confirm");
-        settingsPanel.add(button);
         button.addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
-                String text = textField.getText();
-                try {
-
-                    maze = UI.getInstance().display.GetDisplayedMaze();
-                    MazeDatabase_new.getInstance().SaveTable(maze);
-
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
+                dispose();
             }
         });
 
-        add(settingsPanel);
-        pack();
     }
 }
