@@ -77,6 +77,8 @@ public class UIFormLoader extends JFrame {
             i++;
         }
 
+
+
         mazeNameBox = new JComboBox<>(mazeDetails);
 
         sortOptionsPanel.add(mazeNameBox);

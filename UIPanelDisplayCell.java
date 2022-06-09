@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
+import java.util.Objects;
 
 public class UIPanelDisplayCell extends JPanel implements MouseListener {
 
@@ -26,7 +27,7 @@ public class UIPanelDisplayCell extends JPanel implements MouseListener {
         int cellWidth = 2000/ UI.getInstance().display.GetDisplayedMaze().GetXDimension();
         int borderWidth = 6 - (UI.getInstance().display.GetDisplayedMaze().GetXDimension()*UI.getInstance().display.GetDisplayedMaze().GetYDimension()) /2000;
         Graphics2D g2d = (Graphics2D) g;
-        g2d.setColor(Color.RED);
+        g2d.setColor(Color.BLACK);
         if (cell.getWallAbove() == 1){
             g2d.fillRect(0,0,cellWidth,borderWidth);
         }

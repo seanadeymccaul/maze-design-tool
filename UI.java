@@ -59,4 +59,20 @@ public class UI extends JFrame{
     public static UI getInstance(){
         return UIHolder.INSTANCE;
     }
+
+    public int GetDisplayDimension(int dimension){
+
+
+
+
+        int cellDimension = 64;
+        for (int i = 10; i < dimension; i++){
+            if (i%2 == 0){
+                // every 2 we move from 10 to the dimension, - 1 from the cellDimension
+                cellDimension = cellDimension - 1;
+            }
+        }
+        return cellDimension;
+    }
+
 }

@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Objects;
@@ -9,6 +10,9 @@ import java.util.Objects;
 public class UIFormCreator extends JFrame {
 
     private Maze maze;
+    private String startSelection;
+    private String endSelection;
+    private String logoSelection;
 
     public UIFormCreator() {
 
@@ -57,20 +61,69 @@ public class UIFormCreator extends JFrame {
         JSpinner yDimensionSelection = new JSpinner(new SpinnerNumberModel(10,10,100,2));
         settingsPanel.add(yDimensionSelection);
 
-        // Start image
-        settingsPanel.add(new JLabel("Start image path (optional):"));
-        JTextField startImageField = new JTextField();
-        settingsPanel.add(startImageField);
+        //
+        settingsPanel.add(new JLabel("Start image (optional):"));
+        JButton startImageButton = new JButton("Select");
+        settingsPanel.add(startImageButton);
+        startImageButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String currentPath;
+                File workingDirectory = new File(System.getProperty("user.dir"));
+                JFileChooser fileChooserStart = new JFileChooser();
+                fileChooserStart.setCurrentDirectory(workingDirectory);
+                int result = fileChooserStart.showOpenDialog(null);
+                if (result == JFileChooser.APPROVE_OPTION){
+                    File file = fileChooserStart.getSelectedFile();
+                    currentPath = file.getName();
+                    startImageButton.setText(currentPath);
+                    startSelection = currentPath;
+                }
+            }
+        });
 
-        // End image
-        settingsPanel.add(new JLabel("End image path (optional):"));
-        JTextField endImageField = new JTextField();
-        settingsPanel.add(endImageField);
+        settingsPanel.add(new JLabel("End image (optional):"));
+        JButton endImageButton = new JButton("Select");
+        settingsPanel.add(endImageButton);
+        endImageButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String currentPath;
+                File workingDirectory = new File(System.getProperty("user.dir"));
+                JFileChooser fileChooserStart = new JFileChooser();
+                fileChooserStart.setCurrentDirectory(workingDirectory);
+                int result = fileChooserStart.showOpenDialog(null);
+                if (result == JFileChooser.APPROVE_OPTION){
+                    File file = fileChooserStart.getSelectedFile();
+                    currentPath = file.getName();
+                    endImageButton.setText(currentPath);
+                    endSelection = currentPath;
+                }
+            }
+        });
 
-        // Logo image
-        settingsPanel.add(new JLabel("Logo image path (optional):"));
-        JTextField logoImageField = new JTextField();
-        settingsPanel.add(logoImageField);
+        settingsPanel.add(new JLabel("Logo image (optional):"));
+        JButton logoImageButton = new JButton("Select");
+        settingsPanel.add(logoImageButton);
+        logoImageButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String currentPath;
+                File workingDirectory = new File(System.getProperty("user.dir"));
+                JFileChooser fileChooserStart = new JFileChooser();
+                fileChooserStart.setCurrentDirectory(workingDirectory);
+                int result = fileChooserStart.showOpenDialog(null);
+                if (result == JFileChooser.APPROVE_OPTION){
+                    File file = fileChooserStart.getSelectedFile();
+                    currentPath = file.getName();
+                    logoImageButton.setText(currentPath);
+                    logoSelection = currentPath;
+                }
+            }
+        });
+
+
+
 
         // Dimensions for logo image
         JLabel logoWidthLabel = new JLabel("Logo width");
@@ -119,6 +172,19 @@ public class UIFormCreator extends JFrame {
                             UI.getInstance().display.SetDisplayedMaze(maze);
 
                         }
+                        if (startSelection != null){
+                            System.out.println(startSelection);
+                            maze.imageList.add(new MazeImage(startSelection,1,1,0));
+                        }
+                        if (endSelection != null){
+                            maze.imageList.add(new MazeImage(endSelection,1,1,(maze.xDimension*maze.yDimension)-1));
+                        }
+                        if (logoSelection != null){
+                            int height = (Integer)widthSelection.getValue();
+                            int width = (Integer)heightSelection.getValue();
+                            maze.imageList.add(new MazeImage(logoSelection,width,height,(xDimension*yDimension)/3));
+                        }
+                        UI.getInstance().display.UpdateDisplay();
                     } catch (SQLException | IOException ex) {
                         ex.printStackTrace();
                     }
@@ -141,9 +207,28 @@ public class UIFormCreator extends JFrame {
                     } catch (SQLException | IOException ex) {
                         ex.printStackTrace();
                     }
+                    if (startSelection != null){
+                        System.out.println(startSelection);
+                        maze.imageList.add(new MazeImage(startSelection,2,2,0));
+                    }
+                    if (endSelection != null){
+                        maze.imageList.add(new MazeImage(endSelection,2,2,(maze.xDimension*maze.yDimension)-2-(xDimension)));
+                    }
+                    if (logoSelection != null){
+                        int height = (Integer)widthSelection.getValue();
+                        int width = (Integer)heightSelection.getValue();
+                        // place it in the top right always
+
+                        maze.imageList.add(new MazeImage(logoSelection,width,height,(xDimension*yDimension)/3));
+                    }
+                    try {
+                        UI.getInstance().display.UpdateDisplay();
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
                 }
 
-            dispose();
+                dispose();
             }
         });
 

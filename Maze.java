@@ -240,8 +240,17 @@ abstract class Maze {
                     if (i == mazeImage.GetHeight()-1){
                         bottomValue = 1;
                     }
-                    ReplaceCell(new MazeCell(5,leftValue,rightValue,topValue,bottomValue),
-                            mazeImage.GetIndex() + j + (xDimension * i));
+                    if(mazeData[mazeImage.GetIndex() + j + (xDimension * i)].getValue() == 2){
+                        ReplaceCell(new MazeCell(2,1,0,0,0),
+                                mazeImage.GetIndex() + j + (xDimension * i));
+                    } else if (mazeData[mazeImage.GetIndex() + j + (xDimension * i)].getValue() == 3){
+                        ReplaceCell(new MazeCell(3,0,1,0,1),
+                                mazeImage.GetIndex() + j + (xDimension * i));
+                    } else {
+                        ReplaceCell(new MazeCell(5,leftValue,rightValue,topValue,bottomValue),
+                                mazeImage.GetIndex() + j + (xDimension * i));
+                    }
+
                     BufferedImage croppedImage = outputImage.getSubimage(x, y, 2000 / xDimension, 2000 / yDimension);
                     JLabel picLabel = new JLabel(new ImageIcon(croppedImage));
                     this.displayData[mazeImage.GetIndex() + j + (xDimension * i)].add(picLabel);
@@ -278,13 +287,13 @@ abstract class Maze {
         while (!nextToVisit.isEmpty()){
 
             int cur = nextToVisit.remove();
+            System.out.println("cur is "+cur);
 
-            System.out.println("Checking cell index " + cur);
 
             // If it is found then return
             if (mazeData[cur].getValue() == 3){
                 System.out.println("Solution found");
-                int parent = parentCells[mazeData.length-1];
+                int parent = parentCells[cur];
                 while (parent != 0){
                     directions.add(parent);
                     parent = parentCells[parent];
@@ -336,7 +345,8 @@ abstract class Maze {
                 }
 
                 // add the top neighbour
-                if (mazeData[cur].getWallAbove() == 0){
+                if (mazeData[cur].getWallAbove() == 0 && cur != 0){
+                    System.out.println(xDimension);
                     if (!exploredCells[cur - xDimension]){
                         nextToVisit.add(cur - xDimension);
                         parentCells[cur - xDimension] = cur;

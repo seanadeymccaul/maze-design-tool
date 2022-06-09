@@ -12,32 +12,28 @@ public class UIPanelDisplay extends JPanel {
     public UIPanelDisplay() throws SQLException {
 
         // Set up
-        setPreferredSize(new Dimension(2000, 2000));
         setBackground(Color.GRAY);
-
+        setPreferredSize(new Dimension(2000,2000));
     }
 
     public void UpdateDisplay() throws IOException {
-
         // Clear the display
         removeAll();
-
-        // Get updated display parameters
         int xDimension = displayedMaze.GetXDimension();
         int yDimension = displayedMaze.GetYDimension();
+        int cellWidth = UI.getInstance().GetDisplayDimension(xDimension);
+        int cellHeight = UI.getInstance().GetDisplayDimension(yDimension);
+        setPreferredSize(new Dimension(2000,2000));
+        // Get updated display parameters
         setLayout(new GridLayout(yDimension,xDimension));
-
         // Update the maze display cells
         displayedMaze.GenerateDisplayData();
-
         // Populate the display with the updated display cells
         for (int i = 0; i < xDimension*yDimension; i++){
             UIPanelDisplayCell currentCell = displayedMaze.GetDisplayData()[i];
             add(currentCell);
         }
-
         // Pack the UI
         UI.getInstance().pack();
-
     }
 }
