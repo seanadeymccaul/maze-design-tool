@@ -245,8 +245,8 @@ public class MazeDatabase {
     public void DropTestTable() throws SQLException {
         String[] names = GetTableNames();
         for (String name : names) {
-            if (Objects.equals(name, "Maze Name")) {
-                String sql = "DROP TABLE Maze Name";
+            if (Objects.equals(name, "MazeName")) {
+                String sql = "DROP TABLE MazeName";
                 PreparedStatement statement = connection.prepareStatement(sql);
                 statement.execute();
             }

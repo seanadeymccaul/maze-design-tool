@@ -1,10 +1,11 @@
 import org.junit.jupiter.api.BeforeEach;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
 import java.io.IOException;
 import java.lang.annotation.Target;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Objects;
 
 import static org.testng.Assert.assertThrows;
 import static org.testng.AssertJUnit.assertEquals;
@@ -17,13 +18,15 @@ public class TestMazeDatabase {
 
     }
 
-    public Maze maze = new MazeAdult("Maze Name", "Maze Author", 10, 10);
+    public Maze maze;
 
     @BeforeEach
-    public void initDatabase() throws SQLException {
+    public void initDatabase() throws SQLException, IOException {
         // Remove the maze
         MazeDatabase.getInstance().DropTestTable();
         // Create the maze
+        this.maze = new MazeAdult("MazeName", "Maze Author", 10, 10);
+        this.maze.GenerateAutoMaze();
         MazeDatabase.getInstance().CreateTable(maze, "Adult");
     }
 
@@ -34,7 +37,7 @@ public class TestMazeDatabase {
         String[] mazeNames = MazeDatabase.getInstance().GetTableNames();
         boolean contains = false;
         for (String mazeName : mazeNames) {
-            if ("Maze Name".equals(mazeName)) {
+            if ("MazeName".equals(mazeName)) {
                 contains = true;
                 break;
             }
@@ -46,7 +49,7 @@ public class TestMazeDatabase {
     // Create a table with an invalid name
     public void TestCreateInvalidTable() throws SQLException {
         // Attempt to add the second maze again
-        assertThrows(SQLException.class, () -> {
+        assertThrows(NullPointerException.class, () -> {
             MazeDatabase.getInstance().CreateTable(maze, "Adult");
         });
     }
@@ -54,16 +57,20 @@ public class TestMazeDatabase {
     @Test
     // Create a table, alter the data, and save it, load it again
     public void TestSaveAndLoadTable() throws SQLException, IOException {
-        // Load the instance and add the maze data
-        maze = MazeDatabase.getInstance().LoadTable("Maze Name");
-        maze.GenerateAutoMaze();
+        //
+        MazeImage mazeImage = new MazeImage("examplePath",1,1);
+        // Load the instance and add the new author
+        maze = MazeDatabase.getInstance().LoadTable("MazeName");
+        maze.imageList.add(mazeImage);
         // Save it back to the database
         MazeDatabase.getInstance().SaveTable(maze);
         // Load it back to the maze variable
-        maze = MazeDatabase.getInstance().LoadTable("Maze Name");
+        maze = MazeDatabase.getInstance().LoadTable("MazeName");
         boolean populated = false;
-        if (maze.mazeData[0] != null){
-            populated = true;
+        for (MazeImage m : maze.imageList){
+            if (Objects.equals(m.GetPath(), "examplePath")){
+                populated = true;
+            }
         }
         assertTrue(populated);
     }
@@ -74,9 +81,10 @@ public class TestMazeDatabase {
         // Create and value to set and get
         int value = 53;
         // Insert value into the maze
-        MazeDatabase.getInstance().SetInt("Maze Name","xDimension",value,1);
+        System.out.println("Testing the setting int");
+        MazeDatabase.getInstance().SetInt("MazeName","xDimension",value,1);
         // Get the value as a new variable
-        int sameValue = MazeDatabase.getInstance().GetInt("Maze Name", "xDimension");
+        int sameValue = MazeDatabase.getInstance().GetInt("MazeName", "xDimension");
         assertEquals(value,sameValue);
     }
 
@@ -86,11 +94,11 @@ public class TestMazeDatabase {
         // Create the array of values to set and get
         int[] values = new int[]{1, 2, 3, 4, 5};
         // Insert the array of values
-        MazeDatabase.getInstance().SetIntColumn("Maze Name","yDimension",values);
+        MazeDatabase.getInstance().SetIntColumn("MazeName","yDimension",values);
         // Get the array of values as a new variable
-        Integer[] sameValues = MazeDatabase.getInstance().GetIntegerColumn("Maze Name","yDimension");
+        Integer[] sameValues = MazeDatabase.getInstance().GetIntegerColumn("MazeName","yDimension");
         boolean equals = true;
-        for (int i = 0; i < sameValues.length; i++){
+        for (int i = 0; i < values.length; i++){
             if (values[i] != sameValues[i]) {
                 equals = false;
                 break;
@@ -100,6 +108,7 @@ public class TestMazeDatabase {
     }
 
     @Test
+    // Test the helper method that converts between MazeCell and string data arrays
     public void TestCellAndStringArrayConversion(){
         // Create the strings for the maze cells
         String[] stringCells = new String[]{"10101","11111","00000"};
