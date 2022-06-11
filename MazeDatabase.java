@@ -1,16 +1,14 @@
-import java.io.IOException;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class MazeDatabase_new {
+public class MazeDatabase {
 
     private Connection connection;
 
-    protected MazeDatabase_new(){
+    protected MazeDatabase(){
 
         // Connect to the database
         try{
@@ -24,13 +22,13 @@ public class MazeDatabase_new {
     }
 
     private static class DatabaseHolder {
-        private final static MazeDatabase_new INSTANCE;
+        private final static MazeDatabase INSTANCE;
         static {
-            INSTANCE = new MazeDatabase_new();
+            INSTANCE = new MazeDatabase();
         }
     }
 
-    public static MazeDatabase_new getInstance(){
+    public static MazeDatabase getInstance(){
         return DatabaseHolder.INSTANCE;
     }
 
@@ -244,6 +242,16 @@ public class MazeDatabase_new {
         return cellData;
     }
 
+    public void DropTestTable() throws SQLException {
+        String[] names = GetTableNames();
+        for (String name : names) {
+            if (Objects.equals(name, "Maze Name")) {
+                String sql = "DROP TABLE Maze Name";
+                PreparedStatement statement = connection.prepareStatement(sql);
+                statement.execute();
+            }
+        }
+    }
 
 }
 

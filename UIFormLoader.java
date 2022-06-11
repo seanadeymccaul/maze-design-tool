@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 
@@ -43,10 +42,10 @@ public class UIFormLoader extends JFrame {
         sortOptionsPanel.add(new JLabel("Select a Maze to load: "));
 
         // Get the mazes from the database
-        String[] mazeNames = MazeDatabase_new.getInstance().GetTableNames();
+        String[] mazeNames = MazeDatabase.getInstance().GetTableNames();
         ArrayList<Maze> mazeList = new ArrayList<>();
         for (int i = 0; i < mazeNames.length; i++) {
-            mazeList.add(MazeDatabase_new.getInstance().LoadTable(mazeNames[i]));
+            mazeList.add(MazeDatabase.getInstance().LoadTable(mazeNames[i]));
         }
 
         // Sort by name, author, creation date, last edit date
@@ -132,10 +131,10 @@ public class UIFormLoader extends JFrame {
                                          // Check if the selected maze is adult or child and load it respectively
                                          try {
 
-                                             String[] mazeNames = MazeDatabase_new.getInstance().GetTableNames();
+                                             String[] mazeNames = MazeDatabase.getInstance().GetTableNames();
                                              String selectedMaze = mazeNames[mazeNameBox.getSelectedIndex()];
 
-                                             maze = MazeDatabase_new.getInstance().LoadTable(selectedMaze);
+                                             maze = MazeDatabase.getInstance().LoadTable(selectedMaze);
 
                                              UI.getInstance().display.SetDisplayedMaze(maze);
 

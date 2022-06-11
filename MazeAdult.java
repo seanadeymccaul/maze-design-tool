@@ -1,8 +1,4 @@
-import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -46,7 +42,7 @@ public class MazeAdult extends Maze{
         this.GenerateDisplayData();
 
         // Create the table in the database
-        MazeDatabase_new.getInstance().CreateTable(this,"Adult");
+        MazeDatabase.getInstance().CreateTable(this,"Adult");
 
         }
 
@@ -71,7 +67,7 @@ public class MazeAdult extends Maze{
         this.GenerateDisplayData();
 
         // Create table in the database
-        MazeDatabase_new.getInstance().CreateTable(this, "Adult");
+        MazeDatabase.getInstance().CreateTable(this, "Adult");
 
     }
 

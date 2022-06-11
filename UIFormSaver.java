@@ -2,7 +2,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
 import java.sql.SQLException;
 
 public class UIFormSaver extends JFrame {
@@ -18,7 +17,7 @@ public class UIFormSaver extends JFrame {
         setVisible(true);
 
         maze = UI.getInstance().display.GetDisplayedMaze();
-        MazeDatabase_new.getInstance().SaveTable(maze);
+        MazeDatabase.getInstance().SaveTable(maze);
 
         JPanel titlePanel = new JPanel();
         titlePanel.add(new JLabel("Maze Saver",SwingConstants.CENTER));

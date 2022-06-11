@@ -17,18 +17,14 @@ abstract class Maze {
     private String name;
     public String GetName(){return name;}
     public void SetName(String n){name = n;}
-
     private String author;
     public String GetAuthor(){return author;}
     public void SetAuthor(String n){author = n;}
-
     protected MazeCell[] mazeData;
     public MazeCell[] GetMazeData(){return mazeData;}
     public void SetMazeData(MazeCell[] d){mazeData = d;}
-
     protected UIPanelDisplayCell[] displayData;
     public UIPanelDisplayCell[] GetDisplayData(){return displayData;}
-
     protected int xDimension, yDimension, cellCount, logoIndex, logoWidth, logoHeight;
     public int GetXDimension(){return xDimension;}
     public int GetYDimension(){return yDimension;}
@@ -37,17 +33,14 @@ abstract class Maze {
     public void SetYDimension(int y){yDimension = y;}
     public void SetImageList(ArrayList<MazeImage> a){imageList = a;}
     public ArrayList<Integer> solutionDirections = new ArrayList<>();
-
     protected String lastEditTime;
     public String GetLastEditTime(){return lastEditTime;}
     public void SetLastEditTime(String s){lastEditTime = s;}
     protected String creationTime;
     public String GetCreationTime(){return creationTime;}
     public void SetCreationTime(String c){creationTime = c;}
-
     protected ArrayList<MazeImage> imageList;
     public ArrayList<MazeImage> GetImageList(){return imageList;}
-
     public boolean paintSolution = false;
     public int cellsReached;
     public int deadEnds;
@@ -367,6 +360,10 @@ abstract class Maze {
         return false;
     }
 
+    /**
+     * Saves the current maze to a jpeg image file
+     * @throws IOException Creates a new file to save in the file system
+     */
     public void PublishMaze() throws IOException {
 
         GenerateDisplayData();
@@ -376,21 +373,6 @@ abstract class Maze {
         // divide by 4.
         int width = 2000;
         int height = 2000;
-        /**
-         if (xDimension < 30){
-         width = 64 * xDimension;
-         } else if (xDimension < 50){
-         width = 40 * xDimension;
-         } else if (xDimension < 80){
-         width = 16 * xDimension;
-         }
-         if (yDimension < 30){
-         height = 64 * yDimension;
-         } else if (yDimension < 50){
-         height = 40 * yDimension;
-         } else if (yDimension < 80){
-         height = 16*yDimension;
-         }*/
 
         // create a new JPanel and populate with displayData
         JPanel imageCanvas = new JPanel();

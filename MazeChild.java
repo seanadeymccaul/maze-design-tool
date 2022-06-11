@@ -1,9 +1,6 @@
 import java.awt.*;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
 
 public class MazeChild extends Maze{
 
@@ -44,7 +41,7 @@ public class MazeChild extends Maze{
         this.GenerateDisplayData();
 
         // Create the table in the database
-        MazeDatabase_new.getInstance().CreateTable(this,"Child");
+        MazeDatabase.getInstance().CreateTable(this,"Child");
 
     }
 
@@ -69,7 +66,7 @@ public class MazeChild extends Maze{
         this.GenerateDisplayData();
 
         // Create table in the database
-        MazeDatabase_new.getInstance().CreateTable(this, "Child");
+        MazeDatabase.getInstance().CreateTable(this, "Child");
 
     }
 
@@ -127,29 +124,6 @@ public class MazeChild extends Maze{
             }
         }
 
-        /**
-        this.displayData = new UIPanelDisplayCell[this.cellCount];
-        for (int i = 0; i < this.cellCount; i++){
-            if (mazeData[i].getValue() < 6){
-                UIPanelDisplayCell newPanel = new UIPanelDisplayCell(this.mazeData[i],i);
-                newPanel.setBackground(Color.WHITE);
-                if (this.paintSolution) {
-                    if (solutionDirections.size() > 1) {
-                        if (solutionDirections.contains(i)) {
-                            System.out.println("SETTING GREEN!");
-                            newPanel.setBackground(Color.GREEN);
-                        }
-                    }
-                }
-                this.displayData[i] = newPanel;
-            }
-        }
-        //
-        for (MazeImage i : imageList){
-            InsertImage(i);
-        }
-        // inserts the start and end images above
-        // now cut an opening for it*/
     }
     
 }

@@ -64,10 +64,10 @@ UIFormLoader.java</font>
         <span class="s1">sortOptionsPanel.add(</span><span class="s0">new </span><span class="s1">JLabel(</span><span class="s3">&quot;Select a Maze to load: &quot;</span><span class="s1">))</span><span class="s0">;</span>
 
         <span class="s2">// Get the mazes from the database</span>
-        <span class="s1">String[] mazeNames = MazeDatabase_new.getInstance().GetTableNames()</span><span class="s0">;</span>
+        <span class="s1">String[] mazeNames = MazeDatabase.getInstance().GetTableNames()</span><span class="s0">;</span>
         <span class="s1">ArrayList&lt;Maze&gt; mazeList = </span><span class="s0">new </span><span class="s1">ArrayList&lt;&gt;()</span><span class="s0">;</span>
         <span class="s0">for </span><span class="s1">(</span><span class="s0">int </span><span class="s1">i = </span><span class="s4">0</span><span class="s0">; </span><span class="s1">i &lt; mazeNames.length</span><span class="s0">; </span><span class="s1">i++) {</span>
-            <span class="s1">mazeList.add(MazeDatabase_new.getInstance().LoadTable(mazeNames[i]))</span><span class="s0">;</span>
+            <span class="s1">mazeList.add(MazeDatabase.getInstance().LoadTable(mazeNames[i]))</span><span class="s0">;</span>
         <span class="s1">}</span>
 
         <span class="s2">// Sort by name, author, creation date, last edit date</span>
@@ -151,10 +151,10 @@ UIFormLoader.java</font>
                                          <span class="s2">// Check if the selected maze is adult or child and load it respectively</span>
                                          <span class="s0">try </span><span class="s1">{</span>
 
-                                             <span class="s1">String[] mazeNames = MazeDatabase_new.getInstance().GetTableNames()</span><span class="s0">;</span>
+                                             <span class="s1">String[] mazeNames = MazeDatabase.getInstance().GetTableNames()</span><span class="s0">;</span>
                                              <span class="s1">String selectedMaze = mazeNames[mazeNameBox.getSelectedIndex()]</span><span class="s0">;</span>
 
-                                             <span class="s1">maze = MazeDatabase_new.getInstance().LoadTable(selectedMaze)</span><span class="s0">;</span>
+                                             <span class="s1">maze = MazeDatabase.getInstance().LoadTable(selectedMaze)</span><span class="s0">;</span>
 
                                              <span class="s1">UI.getInstance().display.SetDisplayedMaze(maze)</span><span class="s0">;</span>
 
@@ -177,7 +177,7 @@ UIFormLoader.java</font>
 
         <span class="s5">/**</span>
         <span class="s5">// Add a scrollbar for display of maze options</span>
-        <span class="s5">String[] mazeNames = MazeDatabase_new.getInstance().GetTableNames();</span>
+        <span class="s5">String[] mazeNames = MazeDatabase.getInstance().GetTableNames();</span>
         <span class="s5">JPanel mazeOptions = new JPanel();</span>
         <span class="s5">mazeOptions.setPreferredSize(new Dimension(500, 1000));</span>
         <span class="s5">mazeOptions.setLayout(new GridLayout(mazeNames.length + 2, 3));</span>
@@ -185,8 +185,8 @@ UIFormLoader.java</font>
         <span class="s5">mazeOptions.add(new JLabel(&quot;CREATION TIME&quot;));</span>
         <span class="s5">for (int i = 0; i &lt; mazeNames.length; i++) {</span>
             <span class="s5">mazeOptions.add(new JLabel(mazeNames[i]));</span>
-            <span class="s5">mazeOptions.add(new JLabel(MazeDatabase_new.getInstance().GetString(mazeNames[i],&quot;mazeAuthor&quot;)));</span>
-            <span class="s5">mazeOptions.add(new JLabel(MazeDatabase_new.getInstance().GetString(mazeNames[i],&quot;lastEditTime&quot;)));</span>
+            <span class="s5">mazeOptions.add(new JLabel(MazeDatabase.getInstance().GetString(mazeNames[i],&quot;mazeAuthor&quot;)));</span>
+            <span class="s5">mazeOptions.add(new JLabel(MazeDatabase.getInstance().GetString(mazeNames[i],&quot;lastEditTime&quot;)));</span>
         <span class="s5">}</span>
 
         <span class="s5">JScrollPane scrollPane = new JScrollPane(mazeOptions);</span>
@@ -201,7 +201,7 @@ UIFormLoader.java</font>
         <span class="s5">JPanel settingsPanel = new JPanel(new GridLayout(2, 2, 20, 30));</span>
         <span class="s5">settingsPanel.add(new JLabel(&quot;Sort mazes by: &quot;));</span>
         <span class="s5">settingsPanel.add(new JLabel(&quot;Select a maze to load&quot;));</span>
-        <span class="s5">JComboBox</span><span class="s6">&lt;String&gt; </span><span class="s5">mazeNameBox = new JComboBox&lt;&gt;(MazeDatabase_new.getInstance().GetTableNames());</span>
+        <span class="s5">JComboBox</span><span class="s6">&lt;String&gt; </span><span class="s5">mazeNameBox = new JComboBox&lt;&gt;(MazeDatabase.getInstance().GetTableNames());</span>
         <span class="s5">settingsPanel.add(mazeNameBox);</span>
         <span class="s5">JButton button = new JButton(&quot;Select&quot;);</span>
         <span class="s5">add(button, BorderLayout.SOUTH);</span>
@@ -218,10 +218,10 @@ UIFormLoader.java</font>
                 <span class="s5">// Check if the selected maze is adult or child and load it respectively</span>
                 <span class="s5">try {</span>
 
-                    <span class="s5">String[] mazeNames = MazeDatabase_new.getInstance().GetTableNames();</span>
+                    <span class="s5">String[] mazeNames = MazeDatabase.getInstance().GetTableNames();</span>
                     <span class="s5">String selectedMaze = mazeNames[mazeNameBox.getSelectedIndex()];</span>
 
-                    <span class="s5">maze = MazeDatabase_new.getInstance().LoadTable(selectedMaze);</span>
+                    <span class="s5">maze = MazeDatabase.getInstance().LoadTable(selectedMaze);</span>
 
                     <span class="s5">UI.getInstance().display.SetDisplayedMaze(maze);</span>
 

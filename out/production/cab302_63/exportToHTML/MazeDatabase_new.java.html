@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>MazeDatabase_new.java</title>
+<title>MazeDatabase.java</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <style type="text/css">
 .s0 { color: #cc7832;}
@@ -14,7 +14,7 @@
 <table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
 <tr><td><center>
 <font face="Arial, Helvetica" color="#000000">
-MazeDatabase_new.java</font>
+MazeDatabase.java</font>
 </center></td></tr></table>
 <pre><span class="s0">import </span><span class="s1">java.io.IOException</span><span class="s0">;</span>
 <span class="s0">import </span><span class="s1">java.sql.*</span><span class="s0">;</span>
@@ -24,11 +24,11 @@ MazeDatabase_new.java</font>
 <span class="s0">import </span><span class="s1">java.util.List</span><span class="s0">;</span>
 <span class="s0">import </span><span class="s1">java.util.Objects</span><span class="s0">;</span>
 
-<span class="s0">public class </span><span class="s1">MazeDatabase_new {</span>
+<span class="s0">public class </span><span class="s1">MazeDatabase {</span>
 
     <span class="s0">private </span><span class="s1">Connection connection</span><span class="s0">;</span>
 
-    <span class="s0">protected </span><span class="s1">MazeDatabase_new(){</span>
+    <span class="s0">protected </span><span class="s1">MazeDatabase(){</span>
 
         <span class="s2">// Connect to the database</span>
         <span class="s0">try</span><span class="s1">{</span>
@@ -42,13 +42,13 @@ MazeDatabase_new.java</font>
     <span class="s1">}</span>
 
     <span class="s0">private static class </span><span class="s1">DatabaseHolder {</span>
-        <span class="s0">private final static </span><span class="s1">MazeDatabase_new INSTANCE</span><span class="s0">;</span>
+        <span class="s0">private final static </span><span class="s1">MazeDatabase INSTANCE</span><span class="s0">;</span>
         <span class="s0">static </span><span class="s1">{</span>
-            <span class="s1">INSTANCE = </span><span class="s0">new </span><span class="s1">MazeDatabase_new()</span><span class="s0">;</span>
+            <span class="s1">INSTANCE = </span><span class="s0">new </span><span class="s1">MazeDatabase()</span><span class="s0">;</span>
         <span class="s1">}</span>
     <span class="s1">}</span>
 
-    <span class="s0">public static </span><span class="s1">MazeDatabase_new getInstance(){</span>
+    <span class="s0">public static </span><span class="s1">MazeDatabase getInstance(){</span>
         <span class="s0">return </span><span class="s1">DatabaseHolder.INSTANCE</span><span class="s0">;</span>
     <span class="s1">}</span>
 

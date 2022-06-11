@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.zip.GZIPInputStream;
 
 public class UIFormPublisher extends JFrame {
 
@@ -24,12 +23,12 @@ public class UIFormPublisher extends JFrame {
         title.add(new JLabel("Maze Publisher", SwingConstants.CENTER));
 
         // get all the current mazes
-        String[] mazeNames = MazeDatabase_new.getInstance().GetTableNames();
+        String[] mazeNames = MazeDatabase.getInstance().GetTableNames();
         Maze[] mazes = new Maze[mazeNames.length];
         // then get the info for string array
         String[] mazeInfo = new String[mazeNames.length];
         for (int i = 0; i < mazeNames.length; i++){
-            mazes[i] = MazeDatabase_new.getInstance().LoadTable(mazeNames[i]);
+            mazes[i] = MazeDatabase.getInstance().LoadTable(mazeNames[i]);
             mazeInfo[i] = "[Name] - " + mazes[i].GetName() + " [Author] - " + mazes[i].GetAuthor() + " [CreationDate] - " +
                     mazes[i].GetLastEditTime() + " [LastEditDate] - " + mazes[i].GetLastEditTime();
         }
@@ -81,12 +80,12 @@ public class UIFormPublisher extends JFrame {
                 for (String s : selected){
                     try {
                         if (publishWithSolution.isSelected()){
-                            maze = MazeDatabase_new.getInstance().LoadTable(s);
+                            maze = MazeDatabase.getInstance().LoadTable(s);
                             maze.Solve();
                             maze.paintSolution = true;
                             maze.PublishMaze();
                         } else {
-                            MazeDatabase_new.getInstance().LoadTable(s).PublishMaze();
+                            MazeDatabase.getInstance().LoadTable(s).PublishMaze();
                         }
                     } catch (SQLException | IOException ex) {
                         ex.printStackTrace();

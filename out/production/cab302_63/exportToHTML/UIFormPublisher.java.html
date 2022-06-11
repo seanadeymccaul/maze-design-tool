@@ -42,12 +42,12 @@ UIFormPublisher.java</font>
         <span class="s1">add(title</span><span class="s0">,</span><span class="s1">BorderLayout.NORTH)</span><span class="s0">;</span>
 
         <span class="s4">// get all the current mazes</span>
-        <span class="s1">String[] mazeNames = MazeDatabase_new.getInstance().GetTableNames()</span><span class="s0">;</span>
+        <span class="s1">String[] mazeNames = MazeDatabase.getInstance().GetTableNames()</span><span class="s0">;</span>
         <span class="s1">Maze[] mazes = </span><span class="s0">new </span><span class="s1">Maze[mazeNames.length]</span><span class="s0">;</span>
         <span class="s4">// then get the info for string array</span>
         <span class="s1">String[] mazeInfo = </span><span class="s0">new </span><span class="s1">String[mazeNames.length]</span><span class="s0">;</span>
         <span class="s0">for </span><span class="s1">(</span><span class="s0">int </span><span class="s1">i = </span><span class="s3">0</span><span class="s0">; </span><span class="s1">i &lt; mazeNames.length</span><span class="s0">; </span><span class="s1">i++){</span>
-            <span class="s1">mazes[i] = MazeDatabase_new.getInstance().LoadTable(mazeNames[i])</span><span class="s0">;</span>
+            <span class="s1">mazes[i] = MazeDatabase.getInstance().LoadTable(mazeNames[i])</span><span class="s0">;</span>
             <span class="s1">mazeInfo[i] = </span><span class="s2">&quot;[Name] - &quot; </span><span class="s1">+ mazes[i].GetName() + </span><span class="s2">&quot; [Author] - &quot; </span><span class="s1">+ mazes[i].GetAuthor() + </span><span class="s2">&quot; [CreationDate] - &quot; </span><span class="s1">+</span>
                     <span class="s1">mazes[i].GetLastEditTime() + </span><span class="s2">&quot; [LastEditDate] - &quot; </span><span class="s1">+ mazes[i].GetLastEditTime()</span><span class="s0">;</span>
         <span class="s1">}</span>
@@ -90,7 +90,7 @@ UIFormPublisher.java</font>
                 <span class="s4">// publish them all</span>
                 <span class="s0">for </span><span class="s1">(String s : selected){</span>
                     <span class="s0">try </span><span class="s1">{</span>
-                        <span class="s1">MazeDatabase_new.getInstance().LoadTable(s).PublishMaze()</span><span class="s0">;</span>
+                        <span class="s1">MazeDatabase.getInstance().LoadTable(s).PublishMaze()</span><span class="s0">;</span>
                     <span class="s1">} </span><span class="s0">catch </span><span class="s1">(SQLException | IOException ex) {</span>
                         <span class="s1">ex.printStackTrace()</span><span class="s0">;</span>
                     <span class="s1">}</span>
