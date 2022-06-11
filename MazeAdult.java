@@ -86,7 +86,7 @@ public class MazeAdult extends Maze{
     }
 
     /**
-     *
+     * Populates the display data UIPanelDisplayCell
      * @throws IOException
      */
     @Override
@@ -115,12 +115,6 @@ public class MazeAdult extends Maze{
                 System.out.println("Calling insert for " + i.GetPath());
             }
         }
-        // do the start and end images
-        /**
-        MazeImage startImage = new MazeImage("arrow.png",1,1,0);
-        MazeImage endImage = new MazeImage("arrow.png",1,1,(xDimension*yDimension)-1);
-        InsertImage(startImage);
-        InsertImage(endImage);*/
     }
 
 }

@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.zip.GZIPInputStream;
 
 public class UIFormPublisher extends JFrame {
 
@@ -21,7 +22,6 @@ public class UIFormPublisher extends JFrame {
         // add title
         JPanel title = new JPanel();
         title.add(new JLabel("Maze Publisher", SwingConstants.CENTER));
-        add(title,BorderLayout.NORTH);
 
         // get all the current mazes
         String[] mazeNames = MazeDatabase_new.getInstance().GetTableNames();
@@ -33,6 +33,13 @@ public class UIFormPublisher extends JFrame {
             mazeInfo[i] = "[Name] - " + mazes[i].GetName() + " [Author] - " + mazes[i].GetAuthor() + " [CreationDate] - " +
                     mazes[i].GetLastEditTime() + " [LastEditDate] - " + mazes[i].GetLastEditTime();
         }
+
+        JCheckBox publishWithSolution = new JCheckBox("Publish with solution");
+
+        JPanel top = new JPanel(new BorderLayout());
+        top.add(title,BorderLayout.NORTH);
+        top.add(publishWithSolution,BorderLayout.CENTER,SwingConstants.CENTER);
+        add(top,BorderLayout.NORTH);
 
         // put it in a checkbox list
         JPanel selectionPanel = new JPanel(new GridLayout(mazeNames.length, 1));
@@ -70,9 +77,17 @@ public class UIFormPublisher extends JFrame {
                 }
 
                 // publish them all
+                Maze maze;
                 for (String s : selected){
                     try {
-                        MazeDatabase_new.getInstance().LoadTable(s).PublishMaze();
+                        if (publishWithSolution.isSelected()){
+                            maze = MazeDatabase_new.getInstance().LoadTable(s);
+                            maze.Solve();
+                            maze.paintSolution = true;
+                            maze.PublishMaze();
+                        } else {
+                            MazeDatabase_new.getInstance().LoadTable(s).PublishMaze();
+                        }
                     } catch (SQLException | IOException ex) {
                         ex.printStackTrace();
                     }
