@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Static instance used by the user interface to create or interact with mazes saved in the database
+ */
 public class MazeDatabase {
 
     private Connection connection;
@@ -78,6 +81,7 @@ public class MazeDatabase {
         // Update the image data
         int i = 0;
         for (MazeImage mazeImage : maze.GetImageList()){
+            System.out.println("setting an IMage!!");
             SetString(maze.GetName(),"imagePath",mazeImage.GetPath(),i+1);
             SetInt(maze.GetName(),"imageIndex",mazeImage.GetIndex(),i+1);
             SetInt(maze.GetName(),"imageHeight",mazeImage.GetHeight(),i+1);
@@ -89,24 +93,23 @@ public class MazeDatabase {
 
     public Maze LoadTable(String tableName) throws SQLException {
 
+        // Create a null instance of maze
         Maze maze = null;
 
         // Check if adult or child maze
         if (Objects.equals(GetString(tableName, "mazeType"), "Adult")){
-            maze = new MazeAdult();
+            maze = new MazeAdult(tableName,GetString(tableName,"mazeAuthor"),
+                    GetInt(tableName,"xDimension"),GetInt(tableName,"yDimension"));
         } else if (Objects.equals(GetString(tableName, "mazeType"),"Child")){
-            maze = new MazeChild();
+            maze = new MazeChild(tableName,GetString(tableName,"mazeAuthor"),
+                    GetInt(tableName,"xDimension"),GetInt(tableName,"yDimension"));
         }
 
-        //
+        // If the maze construction was successful, add data
         if (maze != null) {
 
             // Set maze information
-            maze.SetName(tableName);
-            maze.SetAuthor(GetString(tableName,"mazeAuthor"));
             maze.SetMazeData(StringArrayToCellArray(GetStringColumn(tableName,"mazeData")));
-            maze.SetXDimension(GetInt(tableName,"xDimension"));
-            maze.SetYDimension(GetInt(tableName,"yDimension"));
             maze.SetLastEditTime(GetString(tableName,"lastEditTime"));
             maze.SetCreationTime(GetString(tableName,"creationTime"));
 
@@ -118,6 +121,7 @@ public class MazeDatabase {
             ArrayList<MazeImage> arrayList = new ArrayList<>();
             for (int i = 0; i < imagePaths.length; i++){
                 if (imagePaths[i] != null){
+                    System.out.println("ADDING IMAGE");
                     arrayList.add(new MazeImage(imagePaths[i],imageWidths[i],imageHeights[i],imageIndexes[i]));
                 }
             }
@@ -130,10 +134,13 @@ public class MazeDatabase {
 
 
     public String[] GetTableNames() throws SQLException {
+
         List<String> namesList = new ArrayList<String>();
+
         PreparedStatement statement = this.connection.prepareStatement("SELECT table_name FROM information_schema." +
                 "tables WHERE table_schema = 'MazeDatabase';", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
         ResultSet resultSet = statement.executeQuery();
+
         while (resultSet.next()){
             namesList.add(resultSet.getString(1));
         }
@@ -143,10 +150,13 @@ public class MazeDatabase {
 
 
     public String GetString(String tableName, String columnName) throws SQLException {
+
         String result = "";
+
         String sql = "SELECT " + columnName + " FROM " + tableName + " WHERE id = 1";
         PreparedStatement statement = connection.prepareStatement(sql);
         ResultSet resultSet = statement.executeQuery();
+
         while (resultSet.next()){
             result = resultSet.getString(1);
         }
@@ -154,10 +164,13 @@ public class MazeDatabase {
     }
 
     public int GetInt(String tableName, String columnName) throws SQLException {
+
         int result = 0;
+
         String sql = "SELECT " + columnName + " FROM " + tableName + " WHERE id = 1";
         PreparedStatement statement = connection.prepareStatement(sql);
         ResultSet resultSet = statement.executeQuery();
+
         while (resultSet.next()){
             result = resultSet.getInt(1);
         }
@@ -165,23 +178,27 @@ public class MazeDatabase {
     }
 
     public void SetString(String tableName, String columnName, String data, int id) throws SQLException {
-        String sql = "UPDATE " + tableName + " SET " + columnName + " = '" + data + "' WHERE id = " + id + ";";
 
+        String sql = "UPDATE " + tableName + " SET " + columnName + " = '" + data + "' WHERE id = " + id + ";";
         PreparedStatement statement = connection.prepareStatement(sql);
         statement.execute();
     }
 
     public void SetInt(String tableName, String columnName, int data, int id) throws SQLException {
+
         String sql = "UPDATE " + tableName + " SET " + columnName + " = " + data + " WHERE id = " + id + ";";
         PreparedStatement statement = connection.prepareStatement(sql);
         statement.execute();
     }
 
     public String[] GetStringColumn(String tableName, String columnName) throws SQLException {
+
         ArrayList<String> arrayList = new ArrayList<>();
+
         String sql = "SELECT " + columnName + " FROM " + tableName + ";";
         PreparedStatement statement = connection.prepareStatement(sql);
         ResultSet resultSet = statement.executeQuery();
+
         while (resultSet.next()){
             arrayList.add(resultSet.getString(1));
         }
@@ -190,10 +207,13 @@ public class MazeDatabase {
     }
 
     public Integer[] GetIntegerColumn(String tableName, String columnName) throws SQLException {
+
         ArrayList<Integer> arrayList = new ArrayList<>();
+
         String sql = "SELECT " + columnName + " FROM " + tableName + ";";
         PreparedStatement statement = connection.prepareStatement(sql);
         ResultSet resultSet = statement.executeQuery();
+
         while (resultSet.next()){
             arrayList.add(resultSet.getInt(1));
         }
@@ -202,14 +222,16 @@ public class MazeDatabase {
     }
 
     public void SetStringColumn(String tableName, String columnName, String[] data) throws SQLException {
+
         for (int i = 0; i < data.length; i++){
-            String sql = "UPDATE " + tableName + " SET " + columnName + " = " + data[i] + " WHERE id = " + (i+1) + ";";
+            String sql = "UPDATE " + tableName + " SET " + columnName + " = '" + data[i] + "' WHERE id = " + (i+1) + ";";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.execute();
         }
     }
 
     public void SetIntColumn(String tableName, String columnName, int[] data) throws SQLException {
+
         for (int i = 0; i < data.length; i++){
             String sql = "UPDATE " + tableName + " SET " + columnName + " = " + data[i] + " WHERE id = " + (i+1) + ";";
             PreparedStatement statement = connection.prepareStatement(sql);
@@ -217,8 +239,10 @@ public class MazeDatabase {
         }
     }
 
-    public String[] CellArrayToStringArray(MazeCell[] cellData){
+    public String[] CellArrayToStringArray(MazeDataCell[] cellData){
+
         String[] mazeDataString = new String[cellData.length];
+
         for (int i = 0; i < cellData.length; i++){
             String value = Integer.toString(cellData[i].getValue()) + Integer.toString(cellData[i].getWallLeft()) +
                     Integer.toString(cellData[i].getWallRight()) + Integer.toString(cellData[i].getWallAbove()) +
@@ -228,29 +252,33 @@ public class MazeDatabase {
         return mazeDataString;
     }
 
-    public MazeCell[] StringArrayToCellArray(String[] stringData){
-        MazeCell[] cellData = new MazeCell[stringData.length];
+    public MazeDataCell[] StringArrayToCellArray(String[] stringData){
+
+        MazeDataCell[] cellData = new MazeDataCell[stringData.length];
+
         for (int i = 0; i < stringData.length; i++){
-            cellData[i] = new MazeCell(Character.getNumericValue(stringData[i].charAt(0)),
+            cellData[i] = new MazeDataCell(Character.getNumericValue(stringData[i].charAt(0)),
                     Character.getNumericValue(stringData[i].charAt(1)),
                     Character.getNumericValue(stringData[i].charAt(2)),
                     Character.getNumericValue(stringData[i].charAt(3)),
                     Character.getNumericValue(stringData[i].charAt(4)));
 
         }
-
         return cellData;
     }
 
     public void DropTestTable() throws SQLException {
+
         String[] names = GetTableNames();
-        for (String name : names) {
-            if (Objects.equals(name, "MazeName")) {
-                String sql = "DROP TABLE MazeName";
+        for (int i = 0; i < names.length; i++){
+            if (names[i].equalsIgnoreCase("MazeName")){
+                String sql = "DROP TABLE MazeName;";
+                System.out.println(sql);
                 PreparedStatement statement = connection.prepareStatement(sql);
                 statement.execute();
             }
         }
+
     }
 
 }

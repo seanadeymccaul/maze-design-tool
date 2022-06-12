@@ -3,6 +3,9 @@ import java.awt.*;
 import java.io.IOException;
 import java.sql.SQLException;
 
+/**
+ * A JPanel class to contain the maze to display
+ */
 public class UIPanelDisplay extends JPanel {
 
     private Maze displayedMaze;
@@ -30,7 +33,7 @@ public class UIPanelDisplay extends JPanel {
         displayedMaze.GenerateDisplayData();
         // Populate the display with the updated display cells
         for (int i = 0; i < xDimension*yDimension; i++){
-            UIPanelDisplayCell currentCell = displayedMaze.GetDisplayData()[i];
+            MazeDisplayCell currentCell = displayedMaze.GetDisplayData()[i];
             add(currentCell);
         }
         // Pack the UI

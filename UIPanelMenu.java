@@ -4,6 +4,9 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.sql.SQLException;
 
+/**
+ * Meny contained by main UI frame
+ */
 public class UIPanelMenu extends JPanel {
 
     private JButton create;

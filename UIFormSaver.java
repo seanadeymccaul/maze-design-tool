@@ -4,6 +4,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 
+/**
+ * JFrame class that manages maze saver form
+ */
 public class UIFormSaver extends JFrame {
 
     private Maze maze;

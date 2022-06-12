@@ -70,8 +70,8 @@ MazeAdult.java</font>
 
     <span class="s0">private void </span><span class="s1">InitialiseStartEndCells() </span><span class="s0">throws </span><span class="s1">IOException {</span>
 
-        <span class="s1">ReplaceCell(</span><span class="s0">new </span><span class="s1">MazeCell(</span><span class="s4">2</span><span class="s0">,</span><span class="s4">0</span><span class="s0">,</span><span class="s4">0</span><span class="s0">,</span><span class="s4">0</span><span class="s0">,</span><span class="s4">0</span><span class="s1">)</span><span class="s0">,</span><span class="s4">0</span><span class="s1">)</span><span class="s0">;</span>
-        <span class="s1">ReplaceCell(</span><span class="s0">new </span><span class="s1">MazeCell(</span><span class="s4">3</span><span class="s0">,</span><span class="s4">0</span><span class="s0">,</span><span class="s4">0</span><span class="s0">,</span><span class="s4">0</span><span class="s0">,</span><span class="s4">0</span><span class="s1">)</span><span class="s0">,this</span><span class="s1">.cellCount-</span><span class="s4">1</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">ReplaceCell(</span><span class="s0">new </span><span class="s1">MazeDataCell(</span><span class="s4">2</span><span class="s0">,</span><span class="s4">0</span><span class="s0">,</span><span class="s4">0</span><span class="s0">,</span><span class="s4">0</span><span class="s0">,</span><span class="s4">0</span><span class="s1">)</span><span class="s0">,</span><span class="s4">0</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">ReplaceCell(</span><span class="s0">new </span><span class="s1">MazeDataCell(</span><span class="s4">3</span><span class="s0">,</span><span class="s4">0</span><span class="s0">,</span><span class="s4">0</span><span class="s0">,</span><span class="s4">0</span><span class="s0">,</span><span class="s4">0</span><span class="s1">)</span><span class="s0">,this</span><span class="s1">.cellCount-</span><span class="s4">1</span><span class="s1">)</span><span class="s0">;</span>
 
     <span class="s1">}</span>
 
@@ -79,12 +79,12 @@ MazeAdult.java</font>
     <span class="s0">public void </span><span class="s1">GenerateDisplayData() </span><span class="s0">throws </span><span class="s1">IOException {</span>
 
         <span class="s2">//</span>
-        <span class="s0">this</span><span class="s1">.displayData = </span><span class="s0">new </span><span class="s1">UIPanelDisplayCell[xDimension*yDimension]</span><span class="s0">;</span>
+        <span class="s0">this</span><span class="s1">.displayData = </span><span class="s0">new </span><span class="s1">MazeDisplayCell[xDimension*yDimension]</span><span class="s0">;</span>
 
         <span class="s2">//</span>
         <span class="s0">for </span><span class="s1">(</span><span class="s0">int </span><span class="s1">i = </span><span class="s4">0</span><span class="s0">; </span><span class="s1">i &lt; (xDimension*yDimension)</span><span class="s0">; </span><span class="s1">i++){</span>
             <span class="s0">if </span><span class="s1">(mazeData[i].getValue() &lt; </span><span class="s4">6</span><span class="s1">){</span>
-                <span class="s1">UIPanelDisplayCell newPanel = </span><span class="s0">new </span><span class="s1">UIPanelDisplayCell(</span><span class="s0">this</span><span class="s1">.mazeData[i]</span><span class="s0">,</span><span class="s1">i)</span><span class="s0">;</span>
+                <span class="s1">MazeDisplayCell newPanel = </span><span class="s0">new </span><span class="s1">MazeDisplayCell(</span><span class="s0">this</span><span class="s1">.mazeData[i]</span><span class="s0">,</span><span class="s1">i)</span><span class="s0">;</span>
                 <span class="s0">if </span><span class="s1">(</span><span class="s0">this</span><span class="s1">.paintSolution) {</span>
                     <span class="s0">if </span><span class="s1">(solutionDirections.size() &gt; </span><span class="s4">1</span><span class="s1">) {</span>
                         <span class="s0">if </span><span class="s1">(solutionDirections.contains(i)) {</span>

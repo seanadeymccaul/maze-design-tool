@@ -3,14 +3,16 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
-import java.util.Objects;
 
-public class UIPanelDisplayCell extends JPanel implements MouseListener {
+/**
+ * A JPanel object that takes the data of a MazeDataCell and index to create specific JPanel
+ */
+public class MazeDisplayCell extends JPanel implements MouseListener {
 
-    public MazeCell cell;
+    public MazeDataCell cell;
     public int index;
 
-    public UIPanelDisplayCell(MazeCell cell, int index){
+    public MazeDisplayCell(MazeDataCell cell, int index){
         this.cell = cell;
         this.index = index;
         new JPanel();
@@ -46,7 +48,8 @@ public class UIPanelDisplayCell extends JPanel implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-
+        System.out.println("Clicked");
+        System.out.println("" + UI.getInstance().editor.current);
         // If a panel has been selected for insert
         if (UI.getInstance().editor.current){
             System.out.println("Above, below, left right = " + UI.getInstance().editor.GetCurrentSelection().getWallAbove() +

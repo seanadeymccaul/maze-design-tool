@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Objects;
 
+/**
+ * JFrame class that manages maze creation form
+ */
 public class UIFormCreator extends JFrame {
 
     private Maze maze;
@@ -186,6 +189,12 @@ public class UIFormCreator extends JFrame {
                         }
                         UI.getInstance().display.UpdateDisplay();
                     } catch (SQLException | IOException ex) {
+                        JFrame errorFrame = new JFrame();
+                        JPanel errorPanel = new JPanel();
+                        errorPanel.add(new JLabel("An error has occured with the database"));
+                        errorFrame.setPreferredSize(new Dimension(300,100));
+                        errorFrame.setVisible(true); errorFrame.add(errorPanel); errorFrame.pack(); errorFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+
                         ex.printStackTrace();
                     }
                 } else if (mazeTypeSelection.getSelectedIndex() == 1){
@@ -227,7 +236,8 @@ public class UIFormCreator extends JFrame {
                         ex.printStackTrace();
                     }
                 }
-
+                UI.getInstance().solution = new UIPanelSolution();
+                //UI.getInstance().editor = new UIPanelEditor();
                 dispose();
             }
         });

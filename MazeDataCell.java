@@ -1,4 +1,7 @@
-public class MazeCell {
+/**
+ * An object that holds the data of each maze cell object
+ */
+public class MazeDataCell {
 
     private int value;
     public int getValue(){return value;}
@@ -16,7 +19,7 @@ public class MazeCell {
     public int getWallRight(){return wallRight;}
     public void setWallRight(int w){this.wallRight = w;}
 
-    public MazeCell(int value, int wallLeft, int wallRight, int wallAbove, int wallBelow){
+    public MazeDataCell(int value, int wallLeft, int wallRight, int wallAbove, int wallBelow){
         this.value = value;
         this.wallLeft = wallLeft;
         this.wallRight = wallRight;

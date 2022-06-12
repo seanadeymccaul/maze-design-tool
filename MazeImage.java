@@ -1,3 +1,6 @@
+/**
+ * An object for storing image related data in a list
+ */
 public class MazeImage {
 
     // Fields

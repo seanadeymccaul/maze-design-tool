@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+/**
+ * JFrame class that manages maze publisher form
+ */
 public class UIFormPublisher extends JFrame {
 
     JCheckBox[] mazeItems;

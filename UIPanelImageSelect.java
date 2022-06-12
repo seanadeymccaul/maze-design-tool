@@ -4,6 +4,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
+/**
+ * Image select contained by main UI frame
+ */
 public class UIPanelImageSelect extends JPanel {
 
     public boolean current;

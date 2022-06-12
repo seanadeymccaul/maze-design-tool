@@ -237,7 +237,7 @@ MazeDatabase.java</font>
         <span class="s1">}</span>
     <span class="s1">}</span>
 
-    <span class="s0">public </span><span class="s1">String[] CellArrayToStringArray(MazeCell[] cellData){</span>
+    <span class="s0">public </span><span class="s1">String[] CellArrayToStringArray(MazeDataCell[] cellData){</span>
         <span class="s1">String[] mazeDataString = </span><span class="s0">new </span><span class="s1">String[cellData.length]</span><span class="s0">;</span>
         <span class="s0">for </span><span class="s1">(</span><span class="s0">int </span><span class="s1">i = </span><span class="s4">0</span><span class="s0">; </span><span class="s1">i &lt; cellData.length</span><span class="s0">; </span><span class="s1">i++){</span>
             <span class="s1">String value = Integer.toString(cellData[i].getValue()) + Integer.toString(cellData[i].getWallLeft()) +</span>
@@ -248,10 +248,10 @@ MazeDatabase.java</font>
         <span class="s0">return </span><span class="s1">mazeDataString</span><span class="s0">;</span>
     <span class="s1">}</span>
 
-    <span class="s0">public </span><span class="s1">MazeCell[] StringArrayToCellArray(String[] stringData){</span>
-        <span class="s1">MazeCell[] cellData = </span><span class="s0">new </span><span class="s1">MazeCell[stringData.length]</span><span class="s0">;</span>
+    <span class="s0">public </span><span class="s1">MazeDataCell[] StringArrayToCellArray(String[] stringData){</span>
+        <span class="s1">MazeDataCell[] cellData = </span><span class="s0">new </span><span class="s1">MazeDataCell[stringData.length]</span><span class="s0">;</span>
         <span class="s0">for </span><span class="s1">(</span><span class="s0">int </span><span class="s1">i = </span><span class="s4">0</span><span class="s0">; </span><span class="s1">i &lt; stringData.length</span><span class="s0">; </span><span class="s1">i++){</span>
-            <span class="s1">cellData[i] = </span><span class="s0">new </span><span class="s1">MazeCell(Character.getNumericValue(stringData[i].charAt(</span><span class="s4">0</span><span class="s1">))</span><span class="s0">,</span>
+            <span class="s1">cellData[i] = </span><span class="s0">new </span><span class="s1">MazeDataCell(Character.getNumericValue(stringData[i].charAt(</span><span class="s4">0</span><span class="s1">))</span><span class="s0">,</span>
                     <span class="s1">Character.getNumericValue(stringData[i].charAt(</span><span class="s4">1</span><span class="s1">))</span><span class="s0">,</span>
                     <span class="s1">Character.getNumericValue(stringData[i].charAt(</span><span class="s4">2</span><span class="s1">))</span><span class="s0">,</span>
                     <span class="s1">Character.getNumericValue(stringData[i].charAt(</span><span class="s4">3</span><span class="s1">))</span><span class="s0">,</span>

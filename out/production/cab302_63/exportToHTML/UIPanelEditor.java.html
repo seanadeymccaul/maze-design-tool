@@ -24,9 +24,9 @@ UIPanelEditor.java</font>
 <span class="s0">public class </span><span class="s1">UIPanelEditor </span><span class="s0">extends </span><span class="s1">JPanel </span><span class="s0">implements </span><span class="s1">MouseListener {</span>
 
     <span class="s0">public boolean </span><span class="s1">current</span><span class="s0">;</span>
-    <span class="s0">private </span><span class="s1">MazeCell currentSelection</span><span class="s0">;</span>
-    <span class="s0">public </span><span class="s1">MazeCell GetCurrentSelection(){</span><span class="s0">return </span><span class="s1">currentSelection</span><span class="s0">;</span><span class="s1">}</span>
-    <span class="s0">public void </span><span class="s1">SetCurrentSelection(MazeCell m){currentSelection = m</span><span class="s0">;</span><span class="s1">}</span>
+    <span class="s0">private </span><span class="s1">MazeDataCell currentSelection</span><span class="s0">;</span>
+    <span class="s0">public </span><span class="s1">MazeDataCell GetCurrentSelection(){</span><span class="s0">return </span><span class="s1">currentSelection</span><span class="s0">;</span><span class="s1">}</span>
+    <span class="s0">public void </span><span class="s1">SetCurrentSelection(MazeDataCell m){currentSelection = m</span><span class="s0">;</span><span class="s1">}</span>
     <span class="s0">private </span><span class="s1">JPanel option1</span><span class="s0">;</span>
     <span class="s0">private </span><span class="s1">JPanel option2</span><span class="s0">;</span>
     <span class="s0">private </span><span class="s1">JPanel option3</span><span class="s0">;</span>
@@ -78,22 +78,22 @@ UIPanelEditor.java</font>
     <span class="s0">public void </span><span class="s1">mouseClicked(MouseEvent e) {</span>
         <span class="s1">ClearBackgrounds()</span><span class="s0">;</span>
         <span class="s0">if </span><span class="s1">(e.getSource() == option1){</span>
-            <span class="s1">currentSelection = </span><span class="s0">new </span><span class="s1">MazeCell(</span><span class="s3">1</span><span class="s0">,</span><span class="s3">0</span><span class="s0">,</span><span class="s3">0</span><span class="s0">,</span><span class="s3">1</span><span class="s0">,</span><span class="s3">1</span><span class="s1">)</span><span class="s0">;</span>
+            <span class="s1">currentSelection = </span><span class="s0">new </span><span class="s1">MazeDataCell(</span><span class="s3">1</span><span class="s0">,</span><span class="s3">0</span><span class="s0">,</span><span class="s3">0</span><span class="s0">,</span><span class="s3">1</span><span class="s0">,</span><span class="s3">1</span><span class="s1">)</span><span class="s0">;</span>
             <span class="s1">option1.setBackground(Color.GREEN)</span><span class="s0">;</span>
         <span class="s1">} </span><span class="s0">else if </span><span class="s1">(e.getSource() == option2){</span>
-            <span class="s1">currentSelection = </span><span class="s0">new </span><span class="s1">MazeCell(</span><span class="s3">1</span><span class="s0">,</span><span class="s3">1</span><span class="s0">,</span><span class="s3">1</span><span class="s0">,</span><span class="s3">0</span><span class="s0">,</span><span class="s3">0</span><span class="s1">)</span><span class="s0">;</span>
+            <span class="s1">currentSelection = </span><span class="s0">new </span><span class="s1">MazeDataCell(</span><span class="s3">1</span><span class="s0">,</span><span class="s3">1</span><span class="s0">,</span><span class="s3">1</span><span class="s0">,</span><span class="s3">0</span><span class="s0">,</span><span class="s3">0</span><span class="s1">)</span><span class="s0">;</span>
             <span class="s1">option2.setBackground(Color.GREEN)</span><span class="s0">;</span>
         <span class="s1">} </span><span class="s0">else if </span><span class="s1">(e.getSource() == option3){</span>
-            <span class="s1">currentSelection = </span><span class="s0">new </span><span class="s1">MazeCell(</span><span class="s3">1</span><span class="s0">,</span><span class="s3">1</span><span class="s0">,</span><span class="s3">0</span><span class="s0">,</span><span class="s3">1</span><span class="s0">,</span><span class="s3">0</span><span class="s1">)</span><span class="s0">;</span>
+            <span class="s1">currentSelection = </span><span class="s0">new </span><span class="s1">MazeDataCell(</span><span class="s3">1</span><span class="s0">,</span><span class="s3">1</span><span class="s0">,</span><span class="s3">0</span><span class="s0">,</span><span class="s3">1</span><span class="s0">,</span><span class="s3">0</span><span class="s1">)</span><span class="s0">;</span>
             <span class="s1">option3.setBackground(Color.GREEN)</span><span class="s0">;</span>
         <span class="s1">} </span><span class="s0">else if </span><span class="s1">(e.getSource() == option4){</span>
-            <span class="s1">currentSelection = </span><span class="s0">new </span><span class="s1">MazeCell(</span><span class="s3">1</span><span class="s0">,</span><span class="s3">0</span><span class="s0">,</span><span class="s3">1</span><span class="s0">,</span><span class="s3">1</span><span class="s0">,</span><span class="s3">0</span><span class="s1">)</span><span class="s0">;</span>
+            <span class="s1">currentSelection = </span><span class="s0">new </span><span class="s1">MazeDataCell(</span><span class="s3">1</span><span class="s0">,</span><span class="s3">0</span><span class="s0">,</span><span class="s3">1</span><span class="s0">,</span><span class="s3">1</span><span class="s0">,</span><span class="s3">0</span><span class="s1">)</span><span class="s0">;</span>
             <span class="s1">option4.setBackground(Color.GREEN)</span><span class="s0">;</span>
         <span class="s1">} </span><span class="s0">else if </span><span class="s1">(e.getSource() == option5){</span>
-            <span class="s1">currentSelection = </span><span class="s0">new </span><span class="s1">MazeCell(</span><span class="s3">1</span><span class="s0">,</span><span class="s3">1</span><span class="s0">,</span><span class="s3">0</span><span class="s0">,</span><span class="s3">0</span><span class="s0">,</span><span class="s3">1</span><span class="s1">)</span><span class="s0">;</span>
+            <span class="s1">currentSelection = </span><span class="s0">new </span><span class="s1">MazeDataCell(</span><span class="s3">1</span><span class="s0">,</span><span class="s3">1</span><span class="s0">,</span><span class="s3">0</span><span class="s0">,</span><span class="s3">0</span><span class="s0">,</span><span class="s3">1</span><span class="s1">)</span><span class="s0">;</span>
             <span class="s1">option5.setBackground(Color.GREEN)</span><span class="s0">;</span>
         <span class="s1">} </span><span class="s0">else if </span><span class="s1">(e.getSource() == option6){</span>
-            <span class="s1">currentSelection = </span><span class="s0">new </span><span class="s1">MazeCell(</span><span class="s3">1</span><span class="s0">,</span><span class="s3">0</span><span class="s0">,</span><span class="s3">1</span><span class="s0">,</span><span class="s3">0</span><span class="s0">,</span><span class="s3">1</span><span class="s1">)</span><span class="s0">;</span>
+            <span class="s1">currentSelection = </span><span class="s0">new </span><span class="s1">MazeDataCell(</span><span class="s3">1</span><span class="s0">,</span><span class="s3">0</span><span class="s0">,</span><span class="s3">1</span><span class="s0">,</span><span class="s3">0</span><span class="s0">,</span><span class="s3">1</span><span class="s1">)</span><span class="s0">;</span>
             <span class="s1">option6.setBackground(Color.GREEN)</span><span class="s0">;</span>
         <span class="s1">}</span>
         <span class="s1">current = </span><span class="s0">true;</span>

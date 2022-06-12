@@ -2,6 +2,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.sql.SQLException;
 
+/**
+ * Main User Interface JFrame
+ */
 public class UI extends JFrame{
 
     public UIPanelDisplay display;

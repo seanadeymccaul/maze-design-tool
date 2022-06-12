@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+/**
+ * JFrame class that manages maze loader
+ */
 public class UIFormLoader extends JFrame {
 
     private Maze maze;
@@ -141,6 +144,8 @@ public class UIFormLoader extends JFrame {
                                          } catch (SQLException | IOException ex) {
                                              ex.printStackTrace();
                                          }
+                                         UI.getInstance().solution = new UIPanelSolution();
+                                         //UI.getInstance().editor = new UIPanelEditor();
                                         dispose();
                                      }
                                  });

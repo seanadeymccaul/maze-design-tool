@@ -3,12 +3,15 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+/**
+ * Editor contained by main UI frame
+ */
 public class UIPanelEditor extends JPanel implements MouseListener {
 
     public boolean current;
-    private MazeCell currentSelection;
-    public MazeCell GetCurrentSelection(){return currentSelection;}
-    public void SetCurrentSelection(MazeCell m){currentSelection = m;}
+    private MazeDataCell currentSelection;
+    public MazeDataCell GetCurrentSelection(){return currentSelection;}
+    public void SetCurrentSelection(MazeDataCell m){currentSelection = m;}
     private JPanel option1;
     private JPanel option2;
     private JPanel option3;
@@ -60,22 +63,28 @@ public class UIPanelEditor extends JPanel implements MouseListener {
     public void mouseClicked(MouseEvent e) {
         ClearBackgrounds();
         if (e.getSource() == option1){
-            currentSelection = new MazeCell(1,0,0,1,1);
+            currentSelection = new MazeDataCell(1,0,0,1,1);
+            this.current = true;
             option1.setBackground(Color.GREEN);
         } else if (e.getSource() == option2){
-            currentSelection = new MazeCell(1,1,1,0,0);
+            currentSelection = new MazeDataCell(1,1,1,0,0);
+            this.current = true;
             option2.setBackground(Color.GREEN);
         } else if (e.getSource() == option3){
-            currentSelection = new MazeCell(1,1,0,1,0);
+            currentSelection = new MazeDataCell(1,1,0,1,0);
+            this.current = true;
             option3.setBackground(Color.GREEN);
         } else if (e.getSource() == option4){
-            currentSelection = new MazeCell(1,0,1,1,0);
+            currentSelection = new MazeDataCell(1,0,1,1,0);
+            this.current = true;
             option4.setBackground(Color.GREEN);
         } else if (e.getSource() == option5){
-            currentSelection = new MazeCell(1,1,0,0,1);
+            currentSelection = new MazeDataCell(1,1,0,0,1);
+            this.current = true;
             option5.setBackground(Color.GREEN);
         } else if (e.getSource() == option6){
-            currentSelection = new MazeCell(1,0,1,0,1);
+            currentSelection = new MazeDataCell(1,0,1,0,1);
+            this.current = true;
             option6.setBackground(Color.GREEN);
         }
         current = true;

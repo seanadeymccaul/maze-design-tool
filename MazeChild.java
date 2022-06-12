@@ -2,6 +2,9 @@ import java.awt.*;
 import java.io.IOException;
 import java.sql.SQLException;
 
+/**
+ * Extends abstract maze class and implements design specific to child mazes
+ */
 public class MazeChild extends Maze{
 
     /**
@@ -75,37 +78,34 @@ public class MazeChild extends Maze{
      */
     private void InitialiseStartEndCells() {
 
+        ReplaceCell(new MazeDataCell(2,0,0,0,0),0);
+        ReplaceCell(new MazeDataCell(2,0,0,0,0),1);
+        ReplaceCell(new MazeDataCell(2,0,0,0,0),xDimension);
+        ReplaceCell(new MazeDataCell(2,0,0,0,0),xDimension+1);
 
-        ReplaceCell(new MazeCell(2,0,0,0,0),0);
-        ReplaceCell(new MazeCell(2,0,0,0,0),1);
-        ReplaceCell(new MazeCell(2,0,0,0,0),xDimension);
-        ReplaceCell(new MazeCell(2,0,0,0,0),xDimension+1);
+        ReplaceCell(new MazeDataCell(3,0,0,0,0),(xDimension*yDimension)-1);
+        ReplaceCell(new MazeDataCell(3,0,0,0,0),(xDimension*yDimension)-2);
+        ReplaceCell(new MazeDataCell(3,0,0,0,0),(xDimension*yDimension)-2-xDimension);
+        ReplaceCell(new MazeDataCell(3,0,0,0,0),(xDimension*yDimension)-1-xDimension);
 
-        ReplaceCell(new MazeCell(3,0,0,0,0),this.cellCount-1);
-        ReplaceCell(new MazeCell(3,0,0,0,0),this.cellCount-2);
-        ReplaceCell(new MazeCell(3,0,0,0,0),this.cellCount-2-xDimension);
-        ReplaceCell(new MazeCell(3,0,0,0,0),this.cellCount-1-xDimension);
-
-        /**
-        int[] cells = new int[]{0,1,xDimension,xDimension+1};
-        for (int cell : cells) {
-            this.ReplaceCell(new MazeCell(2, 0, 0, 0, 0), cell);
-        }
-        cells = new int[]{cellCount-1,cellCount-2,cellCount-xDimension-1,cellCount-xDimension-2};
-        for (int cell : cells) {
-            this.ReplaceCell(new MazeCell(3, 0, 0, 0, 0), cell);
-        }*/
     }
 
 
     //
     @Override
     public void GenerateDisplayData() throws IOException {
-        this.displayData = new UIPanelDisplayCell[xDimension*yDimension];
+
+        // Wipe the display data
+        this.displayData = new MazeDisplayCell[xDimension*yDimension];
+
         for (int i = 0; i < (xDimension*yDimension); i++){
+
+            // Create a new MazeDisplayCell for each valid mazeData cell
             if (mazeData[i].getValue() < 6){
-                UIPanelDisplayCell newPanel = new UIPanelDisplayCell(this.mazeData[i],i);
+                MazeDisplayCell newPanel = new MazeDisplayCell(this.mazeData[i],i);
                 newPanel.setBackground(Color.WHITE);
+
+                // Check if solution should be painted
                 if (this.paintSolution) {
                     if (solutionDirections.size() > 1) {
                         if (solutionDirections.contains(i)) {
@@ -116,11 +116,11 @@ public class MazeChild extends Maze{
                 this.displayData[i] = newPanel;
             }
         }
-        // for the images
+
+        // Add images from image list
         if (imageList.size() > 0){
             for (MazeImage i : imageList){
                 super.InsertImage(i);
-                System.out.println("Calling insert for " + i.GetPath());
             }
         }
 

@@ -5,6 +5,9 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.Objects;
 
+/**
+ * Solution contained by main UI frame
+ */
 public class UIPanelSolution extends JPanel{
 
     private String solutionState;
