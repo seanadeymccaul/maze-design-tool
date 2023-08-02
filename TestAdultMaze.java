@@ -1,3 +1,5 @@
+package Test;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.io.IOException;
@@ -7,6 +9,8 @@ import static org.testng.Assert.assertThrows;
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertTrue;
 import static org.testng.internal.junit.ArrayAsserts.assertArrayEquals;
+import main.*;
+
 
 public class TestAdultMaze {
 

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 
+
 /**
  * An abstract class that implements some methods of AdultMaze and ChildMaze
  */
